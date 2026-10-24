@@ -46,7 +46,9 @@ E-Absensi Darun Nahdhah adalah aplikasi web untuk pengelolaan data santri dan mo
 - Visual: modern futuristic SaaS, card-based, garis tipis, rounded corners, ruang putih yang cukup.
 - Responsif: desktop-first, sidebar desktop dan drawer pada layar kecil.
 - Aksesibilitas: label input, fokus keyboard yang terlihat, kontras teks, status tidak hanya dibedakan oleh warna.
-- Navigasi: grup menu Workspace, Pembinaan, dan Sistem.
+- Navigasi: grup menu Workspace, Pembinaan, dan Sistem. Urutan awal Workspace: Dashboard, Absensi Sholat, Absensi Kegiatan, Tahfidz, Data Santri, Kegiatan.
+- Dashboard menampilkan jam live zona Asia/Jakarta; indikator waktu tidak berarti data dummy diperbarui secara real-time dari server.
+- Filter dropdown ikhwan/akhwat disediakan pada Data Santri, Absensi Sholat, Absensi Kegiatan, dan Tahfidz.
 - Bahasa antarmuka: Bahasa Indonesia.
 
 ## 6. Batasan rilis frontend

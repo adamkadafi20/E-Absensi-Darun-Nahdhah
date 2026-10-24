@@ -1,5 +1,10 @@
 # Daftar Fitur dan Preview Modul
 
+## Dashboard
+- Jam lokal real-time zona Asia/Jakarta yang diperbarui setiap detik.
+- Kalender kegiatan dari data agenda yang sama dengan halaman Kegiatan.
+- Penanda agenda per tanggal dan pop-up detail kegiatan.
+
 ## Autentikasi
 - Login dan logout (simulasi frontend).
 - Lupa password (alur demo).
@@ -31,13 +36,20 @@
 ## Data Santri
 - Tabel santri dengan NIS, nama, jenis kelamin, cabang/asrama, kehadiran, status.
 - Pencarian nama/NIS.
-- Filter Ikhwan/Akhwat.
+- Dropdown kategori santri: semua, ikhwan, atau akhwat.
 - Tambah, edit, hapus, lihat detail data dummy.
 
 ## Absensi Sholat
 - Ringkasan hadir, izin, tidak hadir.
 - Tabel status per waktu sholat.
+- Dropdown kategori santri: semua, ikhwan, atau akhwat.
 - Placeholder koreksi dan ekspor.
+
+## Absensi Kegiatan
+- Ringkasan hadir, izin, dan tidak hadir.
+- Tabel per santri dengan nama kegiatan, waktu, status, dan cabang.
+- Dropdown kategori santri: semua, ikhwan, atau akhwat.
+- Tampilan ringkasan mengikuti pola halaman Absensi Sholat.
 
 ## Kegiatan
 - Statistik kegiatan.
@@ -47,6 +59,7 @@
 ## Tahfidz
 - Statistik setoran, target, evaluasi.
 - Riwayat setoran, surah/ayat, nilai, pengajar.
+- Dropdown kategori santri: semua, ikhwan, atau akhwat.
 
 ## Hukuman dan Reward
 - Ringkasan pembinaan.
