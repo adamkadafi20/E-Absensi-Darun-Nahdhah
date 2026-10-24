@@ -50,6 +50,31 @@ const activityRows = [
 
 const formatNumber = (n) => new Intl.NumberFormat('id-ID').format(n)
 
+const toDateKey = (date = new Date()) => {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
+const addDaysToKey = (days) => {
+  const date = new Date()
+  date.setDate(date.getDate() + days)
+  return toDateKey(date)
+}
+
+const formatDateID = (dateKey, options = { day: 'numeric', month: 'long', year: 'numeric' }) => {
+  if (!dateKey) return '-'
+  return new Intl.DateTimeFormat('id-ID', options).format(new Date(`${dateKey}T12:00:00`))
+}
+
+const createInitialActivities = () => [
+  { id: 'event-1', title: 'Kajian Kitab Akhlak', category: 'Kegiatan', date: addDaysToKey(0), time: '08:00', participants: 'Semua santri', branch: 'Pusat Darun Nahdhah', location: 'Aula utama', notes: 'Kajian rutin bersama pengasuh.' },
+  { id: 'event-2', title: 'Setoran Tahfidz Bersama', category: 'Tahfidz', date: addDaysToKey(1), time: '06:00', participants: 'Kelompok tahfidz', branch: 'Semua Cabang', location: 'Ruang tahfidz', notes: 'Bawa buku mutabaah hafalan.' },
+  { id: 'event-3', title: 'Muhadharah Santri', category: 'Kegiatan', date: addDaysToKey(3), time: '19:30', participants: 'Ikhwan dan akhwat', branch: 'Cabang Depok', location: 'Aula cabang', notes: 'Latihan pidato bahasa Arab dan Indonesia.' },
+  { id: 'event-4', title: 'Evaluasi Pekanan Asrama', category: 'Pembinaan', date: addDaysToKey(6), time: '16:00', participants: 'Pengurus asrama', branch: 'Cabang Bogor', location: 'Ruang musyrif', notes: 'Evaluasi kedisiplinan dan program pekanan.' },
+]
+
 function Brand({ compact = false }) {
   return <div className="flex items-center gap-3">
     <div className="relative flex h-11 w-11 items-center justify-center rounded-2xl bg-latte-700 text-white shadow-soft">
@@ -116,7 +141,82 @@ function EmptyState({ title, desc }) {
   </div>
 }
 
-function Dashboard({ role, santri }) {
+function CalendarWidget({ activities }) {
+  const [month, setMonth] = useState(() => new Date(new Date().getFullYear(), new Date().getMonth(), 1))
+  const [selectedDate, setSelectedDate] = useState(toDateKey())
+  const [detailOpen, setDetailOpen] = useState(false)
+  const monthLabel = new Intl.DateTimeFormat('id-ID', { month: 'long', year: 'numeric' }).format(month)
+  const firstWeekday = (month.getDay() + 6) % 7
+  const daysInMonth = new Date(month.getFullYear(), month.getMonth() + 1, 0).getDate()
+  const totalCells = Math.ceil((firstWeekday + daysInMonth) / 7) * 7
+  const cells = Array.from({ length: totalCells }, (_, index) => {
+    const day = index - firstWeekday + 1
+    return day > 0 && day <= daysInMonth ? day : null
+  })
+  const eventMap = useMemo(() => activities.reduce((map, item) => {
+    if (!map[item.date]) map[item.date] = []
+    map[item.date].push(item)
+    return map
+  }, {}), [activities])
+  const eventsOnSelectedDate = eventMap[selectedDate] || []
+  const todayKey = toDateKey()
+  const changeMonth = (amount) => setMonth(current => new Date(current.getFullYear(), current.getMonth() + amount, 1))
+  const pickDate = (day) => {
+    if (!day) return
+    const key = `${month.getFullYear()}-${String(month.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+    setSelectedDate(key)
+    setDetailOpen(true)
+  }
+  const dotColor = (category) => category === 'Tahfidz' ? 'bg-emerald-600' : category === 'Sholat' ? 'bg-amber-500' : category === 'Pembinaan' ? 'bg-rose-500' : 'bg-latte-600'
+
+  return <>
+    <section className="rounded-2xl border border-[#eee5da] bg-white p-5 shadow-soft">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <div className="flex items-center gap-2"><div className="flex h-9 w-9 items-center justify-center rounded-xl bg-latte-100 text-latte-700"><CalendarDays size={17}/></div><div><h3 className="font-display text-base font-extrabold text-latte-900">Kalender kegiatan</h3><p className="mt-1 text-xs text-stone-500">Klik tanggal bertitik untuk melihat pengingat.</p></div></div>
+        </div>
+        <div className="flex items-center gap-1">
+          <button aria-label="Bulan sebelumnya" onClick={() => changeMonth(-1)} className="rounded-lg border border-latte-100 p-2 text-latte-700 hover:bg-latte-50"><ChevronLeft size={15}/></button>
+          <button aria-label="Bulan berikutnya" onClick={() => changeMonth(1)} className="rounded-lg border border-latte-100 p-2 text-latte-700 hover:bg-latte-50"><ChevronRight size={15}/></button>
+        </div>
+      </div>
+      <div className="mt-5 flex items-center justify-between gap-2"><h4 className="font-display text-sm font-extrabold capitalize text-latte-900">{monthLabel}</h4><button onClick={() => { const now = new Date(); setMonth(new Date(now.getFullYear(), now.getMonth(), 1)); setSelectedDate(todayKey); setDetailOpen(true) }} className="rounded-lg px-2.5 py-1.5 text-[10px] font-extrabold text-latte-700 hover:bg-latte-50">Hari ini</button></div>
+      <div className="mt-3 grid grid-cols-7 gap-1 text-center">
+        {['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'].map(day => <div key={day} className="py-2 text-[10px] font-bold text-stone-400">{day}</div>)}
+        {cells.map((day, index) => {
+          if (!day) return <div key={`empty-${index}`} className="min-h-[48px] rounded-xl" />
+          const key = `${month.getFullYear()}-${String(month.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+          const dayEvents = eventMap[key] || []
+          const isToday = key === todayKey
+          const isSelected = key === selectedDate
+          return <button key={key} onClick={() => pickDate(day)} aria-label={`${day} ${monthLabel}${dayEvents.length ? `, ${dayEvents.length} kegiatan` : ''}`} className={`relative flex min-h-[48px] flex-col items-center justify-start rounded-xl px-1 py-2 transition ${isSelected ? 'bg-latte-700 text-white shadow-sm' : isToday ? 'border border-latte-300 bg-latte-50 text-latte-800' : 'text-stone-600 hover:bg-latte-50'}`}>
+            <span className="text-xs font-bold">{day}</span>
+            {dayEvents.length > 0 && <span className="mt-1 flex max-w-full items-center justify-center gap-0.5">{dayEvents.slice(0, 3).map((event, dotIndex) => <span key={`${event.id}-${dotIndex}`} className={`h-1.5 w-1.5 rounded-full ${isSelected ? 'bg-white' : dotColor(event.category)}`} />)}</span>}
+            {dayEvents.length > 1 && <span className={`mt-0.5 text-[8px] font-bold ${isSelected ? 'text-white/80' : 'text-stone-400'}`}>{dayEvents.length} agenda</span>}
+          </button>
+        })}
+      </div>
+      <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-stone-100 pt-3">
+        <span className="flex items-center gap-1.5 text-[10px] text-stone-500"><span className="h-2 w-2 rounded-full bg-latte-600"/>Kegiatan</span>
+        <span className="flex items-center gap-1.5 text-[10px] text-stone-500"><span className="h-2 w-2 rounded-full bg-emerald-600"/>Tahfidz</span>
+        <span className="flex items-center gap-1.5 text-[10px] text-stone-500"><span className="h-2 w-2 rounded-full bg-amber-500"/>Sholat</span>
+        <span className="ml-auto text-[10px] font-semibold text-latte-700">{activities.length} agenda tersimpan</span>
+      </div>
+      {eventsOnSelectedDate.length > 0 && <div className="mt-4 rounded-xl bg-latte-50 p-3"><div className="flex items-center justify-between gap-2"><div><p className="text-[10px] font-bold uppercase tracking-wider text-latte-600">Agenda terdekat</p><p className="mt-1 text-xs font-extrabold text-latte-900">{eventsOnSelectedDate[0].title}</p></div><button onClick={() => setDetailOpen(true)} className="shrink-0 rounded-lg bg-white px-3 py-2 text-[10px] font-extrabold text-latte-700 shadow-sm hover:bg-latte-100">Lihat detail</button></div><p className="mt-1 text-[10px] text-stone-500">{formatDateID(selectedDate)} · {eventsOnSelectedDate[0].time} WIB</p></div>}
+    </section>
+    {detailOpen && <div className="fixed inset-0 z-[70] flex items-center justify-center bg-latte-900/40 p-4 backdrop-blur-sm" onMouseDown={(event) => { if (event.target === event.currentTarget) setDetailOpen(false) }}>
+      <div role="dialog" aria-modal="true" aria-labelledby="calendar-detail-title" className="w-full max-w-lg overflow-hidden rounded-3xl bg-white shadow-2xl">
+        <div className="flex items-start justify-between bg-latte-800 p-5 text-white"><div><p className="text-[10px] font-bold uppercase tracking-[.18em] text-latte-200">Pengingat kegiatan</p><h3 id="calendar-detail-title" className="mt-2 font-display text-xl font-extrabold capitalize">{formatDateID(selectedDate)}</h3><p className="mt-1 text-xs text-latte-100/75">{eventsOnSelectedDate.length} kegiatan pada tanggal ini</p></div><button onClick={() => setDetailOpen(false)} aria-label="Tutup detail" className="rounded-xl bg-white/10 p-2 text-white hover:bg-white/20"><X size={17}/></button></div>
+        <div className="max-h-[60vh] space-y-3 overflow-y-auto p-5">
+          {eventsOnSelectedDate.length === 0 ? <div className="py-8 text-center"><div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-latte-50 text-latte-500"><CalendarDays size={21}/></div><p className="mt-3 text-sm font-extrabold text-latte-900">Belum ada kegiatan</p><p className="mt-1 text-xs text-stone-500">Belum ada agenda yang dijadwalkan pada tanggal ini.</p></div> : eventsOnSelectedDate.slice().sort((a, b) => a.time.localeCompare(b.time)).map(event => <div key={event.id} className="rounded-2xl border border-stone-100 p-4"><div className="flex items-start gap-3"><div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${event.category === 'Tahfidz' ? 'bg-emerald-50 text-emerald-700' : event.category === 'Sholat' ? 'bg-amber-50 text-amber-700' : event.category === 'Pembinaan' ? 'bg-rose-50 text-rose-700' : 'bg-latte-100 text-latte-700'}`}><CalendarDays size={18}/></div><div className="min-w-0 flex-1"><div className="flex flex-wrap items-start justify-between gap-2"><h4 className="text-sm font-extrabold text-latte-900">{event.title}</h4><Badge tone={event.category === 'Tahfidz' ? 'green' : event.category === 'Sholat' ? 'amber' : event.category === 'Pembinaan' ? 'red' : 'brown'}>{event.category}</Badge></div><div className="mt-3 grid gap-2 sm:grid-cols-2"><p className="flex items-center gap-2 text-xs text-stone-600"><Clock3 size={14} className="text-latte-500"/>{event.time} WIB</p><p className="flex items-center gap-2 text-xs text-stone-600"><Users size={14} className="text-latte-500"/>{event.participants}</p><p className="flex items-center gap-2 text-xs text-stone-600"><Building2 size={14} className="text-latte-500"/>{event.branch}</p>{event.location && <p className="flex items-center gap-2 text-xs text-stone-600"><MapPin size={14} className="text-latte-500"/>{event.location}</p>}</div>{event.notes && <p className="mt-3 border-t border-stone-100 pt-3 text-xs leading-5 text-stone-500">{event.notes}</p>}</div></div></div>)}
+        </div>
+        <div className="flex justify-end border-t border-stone-100 p-4"><Button variant="outline" onClick={() => setDetailOpen(false)}>Tutup</Button><Button onClick={() => { setDetailOpen(false); window.dispatchEvent(new CustomEvent('navigate', { detail: 'Kegiatan' })) }} icon={ArrowRight}>Buka halaman kegiatan</Button></div>
+      </div>
+    </div>}
+  </>
+}
+
+function Dashboard({ role, santri, activities }) {
   const isSuper = role === 'Super Admin'
   return <div className="space-y-6">
     <div className="relative overflow-hidden rounded-[26px] bg-latte-800 p-6 text-white md:p-8">
@@ -147,6 +247,8 @@ function Dashboard({ role, santri }) {
       <StatCard label="Setoran Tahfidz" value={formatNumber(isSuper ? 326 : 48)} change="+12,6%" note="setoran minggu ini" icon={BookOpen} color="bg-[#f8ead8] text-[#a16d35]"/>
       <StatCard label="Perlu Perhatian" value={formatNumber(isSuper ? 27 : 8)} change="−3 santri" note="dari minggu lalu" icon={HeartHandshake} color="bg-[#f9e7e3] text-[#b66c5e]"/>
     </div>
+
+    <CalendarWidget activities={activities} />
 
     <div className="grid gap-5 xl:grid-cols-[1.45fr_1fr]">
       <section className="rounded-2xl border border-[#eee5da] bg-white p-5 shadow-soft">
@@ -209,6 +311,53 @@ function SantriPage({ santri, setSantri, role }) {
       <div className="flex flex-wrap items-center justify-between gap-3 border-t border-stone-100 px-5 py-3"><p className="text-[11px] text-stone-400">Menampilkan {filtered.length} dari {santri.length} santri · Data dummy</p><div className="flex items-center gap-1"><button className="rounded-lg border border-stone-200 p-1.5 text-stone-400"><ChevronLeft size={14}/></button><button className="h-7 w-7 rounded-lg bg-latte-700 text-[11px] font-bold text-white">1</button><button className="rounded-lg border border-stone-200 p-1.5 text-stone-400"><ChevronRight size={14}/></button></div></div>
     </section>
     {modal && <div className="fixed inset-0 z-50 flex items-center justify-center bg-latte-900/35 p-4 backdrop-blur-sm"><form onSubmit={save} className="w-full max-w-lg rounded-3xl bg-white p-6 shadow-2xl"><div className="flex items-start justify-between"><div><h3 className="font-display text-xl font-extrabold text-latte-900">{editing ? 'Edit Data Santri' : 'Tambah Santri'}</h3><p className="mt-1 text-xs text-stone-500">Form demo · perubahan tersimpan selama sesi ini.</p></div><button type="button" onClick={() => setModal(false)} className="rounded-xl p-2 text-stone-400 hover:bg-stone-100"><X size={18}/></button></div><div className="mt-5 grid gap-4 sm:grid-cols-2"><label className="text-xs font-bold text-stone-600">Nama lengkap<input required value={form.name} onChange={e => setForm({...form, name:e.target.value})} className="mt-2 w-full rounded-xl border border-stone-200 px-3 py-2.5 font-normal outline-none focus:border-latte-400" placeholder="Nama santri"/></label><label className="text-xs font-bold text-stone-600">NIS<input required value={form.nis} onChange={e => setForm({...form, nis:e.target.value})} className="mt-2 w-full rounded-xl border border-stone-200 px-3 py-2.5 font-normal outline-none focus:border-latte-400" placeholder="DN-24000"/></label><label className="text-xs font-bold text-stone-600">Jenis kelamin<select value={form.gender} onChange={e => setForm({...form, gender:e.target.value})} className="mt-2 w-full rounded-xl border border-stone-200 px-3 py-2.5 font-normal outline-none"><option>Ikhwan</option><option>Akhwat</option></select></label><label className="text-xs font-bold text-stone-600">Status<select value={form.status} onChange={e => setForm({...form, status:e.target.value})} className="mt-2 w-full rounded-xl border border-stone-200 px-3 py-2.5 font-normal outline-none"><option>Aktif</option><option>Perlu perhatian</option><option>Nonaktif</option></select></label><label className="text-xs font-bold text-stone-600 sm:col-span-2">Cabang<select value={form.branch} onChange={e => setForm({...form, branch:e.target.value})} className="mt-2 w-full rounded-xl border border-stone-200 px-3 py-2.5 font-normal outline-none"><option>Pusat Darun Nahdhah</option><option>Cabang Depok</option><option>Cabang Bogor</option></select></label><label className="text-xs font-bold text-stone-600 sm:col-span-2">Asrama<select value={form.dorm} onChange={e => setForm({...form, dorm:e.target.value})} className="mt-2 w-full rounded-xl border border-stone-200 px-3 py-2.5 font-normal outline-none"><option>Asrama Al-Falah</option><option>Asrama Al-Ikhlas</option><option>Asrama An-Nisa</option></select></label></div><div className="mt-6 flex justify-end gap-2"><Button type="button" variant="outline" onClick={() => setModal(false)}>Batal</Button><button type="submit" className="rounded-xl bg-latte-700 px-4 py-2.5 text-xs font-bold text-white hover:bg-latte-800">Simpan Data</button></div></form></div>}
+  </div>
+}
+
+function ActivitiesPage({ activities, setActivities, role }) {
+  const [query, setQuery] = useState('')
+  const [categoryFilter, setCategoryFilter] = useState('Semua')
+  const [showModal, setShowModal] = useState(false)
+  const [editing, setEditing] = useState(null)
+  const blankForm = () => ({ title: '', category: 'Kegiatan', date: toDateKey(), time: '08:00', participants: 'Semua santri', branch: 'Pusat Darun Nahdhah', location: '', notes: '' })
+  const [form, setForm] = useState(blankForm)
+  const openAdd = () => { setEditing(null); setForm(blankForm()); setShowModal(true) }
+  const openEdit = (item) => { setEditing(item); setForm({ ...blankForm(), ...item }); setShowModal(true) }
+  const saveActivity = (event) => {
+    event.preventDefault()
+    if (!form.title.trim() || !form.date || !form.time || !form.participants.trim() || !form.branch) return
+    if (editing) setActivities(current => current.map(item => item.id === editing.id ? { ...item, ...form, title: form.title.trim() } : item))
+    else setActivities(current => [...current, { ...form, id: `event-${Date.now()}`, title: form.title.trim() }])
+    setShowModal(false)
+    setEditing(null)
+  }
+  const deleteActivity = (item) => {
+    if (window.confirm(`Hapus kegiatan "${item.title}"?`)) setActivities(current => current.filter(event => event.id !== item.id))
+  }
+  const filtered = activities.filter(item => `${item.title} ${item.branch} ${item.participants} ${item.location} ${item.category}`.toLowerCase().includes(query.toLowerCase()) && (categoryFilter === 'Semua' || item.category === categoryFilter)).slice().sort((a, b) => `${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`))
+  const today = toDateKey()
+  const upcoming = activities.filter(item => item.date >= today).length
+
+  return <div className="space-y-5">
+    <div className="flex flex-wrap items-end justify-between gap-3"><div><div className="flex items-center gap-2 text-xs text-stone-400"><span>Workspace</span><ChevronRight size={12}/><span className="text-latte-700">Kegiatan</span></div><h2 className="mt-2 font-display text-2xl font-extrabold text-latte-900">Manajemen Kegiatan</h2><p className="mt-1 text-sm text-stone-500">Atur jadwal, waktu, peserta, dan cabang. Setiap agenda langsung ditandai di kalender Dashboard.</p></div>{role !== 'Santri' && <Button icon={Plus} onClick={openAdd}>Tambah Kegiatan</Button>}</div>
+    <div className="grid gap-3 sm:grid-cols-3"><div className="rounded-2xl border border-[#eee5da] bg-white p-4 shadow-soft"><p className="text-xs text-stone-500">Total agenda</p><p className="mt-2 font-display text-2xl font-extrabold text-latte-900">{activities.length}</p><p className="mt-1 text-[10px] text-stone-400">Semua jadwal tersimpan</p></div><div className="rounded-2xl border border-[#eee5da] bg-white p-4 shadow-soft"><p className="text-xs text-stone-500">Agenda mendatang</p><p className="mt-2 font-display text-2xl font-extrabold text-latte-900">{upcoming}</p><p className="mt-1 text-[10px] text-stone-400">Hari ini dan berikutnya</p></div><div className="rounded-2xl border border-[#eee5da] bg-white p-4 shadow-soft"><p className="text-xs text-stone-500">Cabang terlibat</p><p className="mt-2 font-display text-2xl font-extrabold text-latte-900">{new Set(activities.map(item => item.branch)).size}</p><p className="mt-1 text-[10px] text-stone-400">Termasuk semua cabang</p></div></div>
+    <section className="overflow-hidden rounded-2xl border border-[#eee5da] bg-white shadow-soft">
+      <div className="flex flex-wrap items-center gap-3 border-b border-stone-100 p-4"><div className="relative min-w-[200px] flex-1"><Search className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" size={15}/><input value={query} onChange={event => setQuery(event.target.value)} placeholder="Cari nama kegiatan, peserta, cabang..." className="w-full rounded-xl border border-stone-200 bg-latte-50/50 py-2.5 pl-9 pr-3 text-xs outline-none focus:border-latte-400"/></div><div className="flex items-center gap-2 rounded-xl border border-stone-200 px-3 py-2.5 text-xs font-semibold text-stone-500"><Filter size={14}/><select aria-label="Filter kategori" value={categoryFilter} onChange={event => setCategoryFilter(event.target.value)} className="max-w-[150px] bg-transparent outline-none"><option>Semua</option><option>Kegiatan</option><option>Tahfidz</option><option>Sholat</option><option>Pembinaan</option></select></div></div>
+      <div className="overflow-x-auto"><table className="w-full min-w-[900px] text-left"><thead className="bg-latte-50/70"><tr>{['Kegiatan','Tanggal & waktu','Peserta','Cabang','Kategori','Aksi'].map(label => <th key={label} className="px-5 py-3 text-[10px] font-bold uppercase tracking-wider text-stone-400">{label}</th>)}</tr></thead><tbody>{filtered.map(item => <tr key={item.id} className="border-t border-stone-100 hover:bg-latte-50/40"><td className="px-5 py-4"><p className="text-xs font-extrabold text-latte-900">{item.title}</p>{item.location && <p className="mt-1 flex items-center gap-1 text-[10px] text-stone-400"><MapPin size={11}/>{item.location}</p>}</td><td className="px-5 py-4"><p className="text-xs font-semibold text-stone-700">{formatDateID(item.date, { day: 'numeric', month: 'short', year: 'numeric' })}</p><p className="mt-1 flex items-center gap-1 text-[10px] text-stone-400"><Clock3 size={11}/>{item.time} WIB</p></td><td className="px-5 py-4 text-xs text-stone-600">{item.participants}</td><td className="px-5 py-4 text-xs text-stone-600">{item.branch}</td><td className="px-5 py-4"><Badge tone={item.category === 'Tahfidz' ? 'green' : item.category === 'Sholat' ? 'amber' : item.category === 'Pembinaan' ? 'red' : 'brown'}>{item.category}</Badge></td><td className="px-5 py-4"><div className="flex gap-1"><button title="Edit kegiatan" onClick={() => openEdit(item)} className="rounded-lg p-2 text-stone-400 hover:bg-latte-100 hover:text-latte-700"><Pencil size={15}/></button><button title="Hapus kegiatan" onClick={() => deleteActivity(item)} className="rounded-lg p-2 text-stone-400 hover:bg-rose-50 hover:text-rose-600"><Trash2 size={15}/></button></div></td></tr>)}</tbody></table></div>
+      {filtered.length === 0 && <EmptyState title="Belum ada kegiatan" desc="Coba ubah pencarian, atau tambahkan jadwal kegiatan baru."/>}
+      <div className="border-t border-stone-100 px-5 py-3 text-[11px] text-stone-400">Menampilkan {filtered.length} dari {activities.length} agenda · Perubahan langsung tercermin pada kalender Dashboard.</div>
+    </section>
+    {showModal && <div className="fixed inset-0 z-[80] flex items-center justify-center bg-latte-900/40 p-4 backdrop-blur-sm" onMouseDown={event => { if (event.target === event.currentTarget) setShowModal(false) }}><form onSubmit={saveActivity} className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-3xl bg-white p-5 shadow-2xl sm:p-6"><div className="flex items-start justify-between gap-3"><div><div className="flex h-10 w-10 items-center justify-center rounded-xl bg-latte-100 text-latte-700"><CalendarDays size={19}/></div><h3 className="mt-3 font-display text-xl font-extrabold text-latte-900">{editing ? 'Edit Kegiatan' : 'Tambah Kegiatan'}</h3><p className="mt-1 text-xs text-stone-500">Lengkapi jadwal agar kegiatan muncul pada kalender Dashboard.</p></div><button type="button" onClick={() => setShowModal(false)} aria-label="Tutup formulir" className="rounded-xl p-2 text-stone-400 hover:bg-stone-100"><X size={18}/></button></div>
+      <div className="mt-5 grid gap-4 sm:grid-cols-2">
+        <label className="text-xs font-bold text-stone-600 sm:col-span-2">Nama kegiatan *<input required autoFocus value={form.title} onChange={event => setForm({ ...form, title: event.target.value })} className="mt-2 w-full rounded-xl border border-stone-200 px-3 py-3 font-normal outline-none focus:border-latte-400 focus:ring-2 focus:ring-latte-100" placeholder="Contoh: Kajian Kitab Akhlak"/></label>
+        <label className="text-xs font-bold text-stone-600">Tanggal *<input required type="date" value={form.date} onChange={event => setForm({ ...form, date: event.target.value })} className="mt-2 w-full rounded-xl border border-stone-200 px-3 py-3 font-normal outline-none focus:border-latte-400"/></label>
+        <label className="text-xs font-bold text-stone-600">Waktu *<input required type="time" value={form.time} onChange={event => setForm({ ...form, time: event.target.value })} className="mt-2 w-full rounded-xl border border-stone-200 px-3 py-3 font-normal outline-none focus:border-latte-400"/></label>
+        <label className="text-xs font-bold text-stone-600">Kategori *<select value={form.category} onChange={event => setForm({ ...form, category: event.target.value })} className="mt-2 w-full rounded-xl border border-stone-200 bg-white px-3 py-3 font-normal outline-none focus:border-latte-400"><option>Kegiatan</option><option>Tahfidz</option><option>Sholat</option><option>Pembinaan</option></select></label>
+        <label className="text-xs font-bold text-stone-600">Peserta *<select value={form.participants} onChange={event => setForm({ ...form, participants: event.target.value })} className="mt-2 w-full rounded-xl border border-stone-200 bg-white px-3 py-3 font-normal outline-none focus:border-latte-400"><option>Semua santri</option><option>Ikhwan dan akhwat</option><option>Ikhwan</option><option>Akhwat</option><option>Kelompok tahfidz</option><option>Pengurus asrama</option><option>Petugas cabang</option></select></label>
+        <label className="text-xs font-bold text-stone-600 sm:col-span-2">Cabang *<select required value={form.branch} onChange={event => setForm({ ...form, branch: event.target.value })} className="mt-2 w-full rounded-xl border border-stone-200 bg-white px-3 py-3 font-normal outline-none focus:border-latte-400"><option>Semua Cabang</option><option>Pusat Darun Nahdhah</option><option>Cabang Depok</option><option>Cabang Bogor</option><option>Cabang Bekasi</option></select></label>
+        <label className="text-xs font-bold text-stone-600 sm:col-span-2">Lokasi (opsional)<input value={form.location} onChange={event => setForm({ ...form, location: event.target.value })} className="mt-2 w-full rounded-xl border border-stone-200 px-3 py-3 font-normal outline-none focus:border-latte-400" placeholder="Contoh: Aula utama"/></label>
+        <label className="text-xs font-bold text-stone-600 sm:col-span-2">Catatan (opsional)<textarea value={form.notes} onChange={event => setForm({ ...form, notes: event.target.value })} rows={3} className="mt-2 w-full resize-y rounded-xl border border-stone-200 px-3 py-3 font-normal outline-none focus:border-latte-400" placeholder="Keterangan atau pengingat untuk peserta..."/></label>
+      </div><div className="mt-6 flex justify-end gap-2 border-t border-stone-100 pt-4"><Button type="button" variant="outline" onClick={() => setShowModal(false)}>Batal</Button><Button type="submit" icon={Check}>{editing ? 'Simpan Perubahan' : 'Simpan Kegiatan'}</Button></div></form></div>}
   </div>
 }
 
@@ -289,6 +438,7 @@ export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [collapsed, setCollapsed] = useState(false)
   const [santri, setSantri] = useState(initialSantri)
+  const [activities, setActivities] = useState(createInitialActivities)
   const [notificationsOpen, setNotificationsOpen] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
   const [dark, setDark] = useState(false)
@@ -325,7 +475,7 @@ export default function App() {
         </div>
       </header>
       <main className="mx-auto max-w-[1600px] px-4 py-6 sm:px-7 sm:py-8 xl:px-9">
-        {page === 'Dashboard' ? (isStudent ? <StudentPortal santri={santri}/> : <Dashboard role={role} santri={santri}/>) : page === 'Data Santri' ? <SantriPage santri={santri} setSantri={setSantri} role={role}/> : <GenericPage page={page} role={role}/>}
+        {page === 'Dashboard' ? (isStudent ? <StudentPortal santri={santri}/> : <Dashboard role={role} santri={santri} activities={activities}/>) : page === 'Data Santri' ? <SantriPage santri={santri} setSantri={setSantri} role={role}/> : page === 'Kegiatan' ? <ActivitiesPage activities={activities} setActivities={setActivities} role={role}/> : <GenericPage page={page} role={role}/>}
         <footer className="mt-8 flex flex-wrap items-center justify-between gap-2 border-t border-[#e9dfd3] pt-5 text-[10px] text-stone-400"><p>© 2026 E-Absensi Darun Nahdhah <span className="mx-1">·</span> Frontend preview v0.1.0</p><p className="flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-emerald-500"/> Data demo · Belum terhubung backend</p></footer>
       </main>
     </div>
