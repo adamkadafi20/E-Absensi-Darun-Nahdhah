@@ -60,3 +60,9 @@ Import root folder yang berisi `package.json`, atau atur **Root Directory** di p
 - Deployment Vercel hanya mempublikasikan frontend; Vercel tidak otomatis menyediakan database atau backend untuk aplikasi ini.
 
 Lihat `docs/SOT.md`, `docs/FEATURES.md`, `AGENTS.md`, dan `PROMPT_EXECUTION.md` untuk scope, aturan implementasi, dan prompt eksekusi tahap awal.
+
+
+## Filter Ikhwan/Akhwat (v0.2.2)
+- Menu Absensi Sholat, Absensi Kegiatan, Tahfidz, dan Data Santri memiliki submenu Semua Santri, Ikhwan, dan Akhwat.
+- Klik nama menu untuk membuka submenu; gunakan chevron di sisi kanan untuk expand/collapse.
+- Memilih Ikhwan/Akhwat menyaring tabel modul ke kategori tersebut, dan pilihan ditampilkan sebagai badge di judul halaman.

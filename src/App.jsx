@@ -311,7 +311,7 @@ function SantriPage({ santri, setSantri, role, genderFilter, setGenderFilter }) 
   const save = (e) => { e.preventDefault(); if (!form.name.trim() || !form.nis.trim()) return; if (editing) setSantri(prev => prev.map(s => s.nis === editing.nis ? { ...s, ...form, attendance: s.attendance || 90, tahfidz: s.tahfidz || '0 Juz' } : s)); else setSantri(prev => [{ ...form, attendance: 100, tahfidz: '0 Juz' }, ...prev]); setModal(false) }
   const remove = (item) => { if (confirm(`Hapus data ${item.name}?`)) setSantri(prev => prev.filter(s => s.nis !== item.nis)) }
   return <div className="space-y-5">
-    <div className="flex flex-wrap items-end justify-between gap-3"><div><div className="flex items-center gap-2 text-xs text-stone-400"><span>Workspace</span><ChevronRight size={12}/><span className="text-latte-700">Data Santri</span></div><h2 className="mt-2 font-display text-2xl font-extrabold text-latte-900">Data Santri</h2><p className="mt-1 text-sm text-stone-500">Kelola profil, penempatan, dan status santri.</p></div>{role !== 'Santri' && <Button icon={Plus} onClick={openAdd}>Tambah Santri</Button>}</div>
+    <div className="flex flex-wrap items-end justify-between gap-3"><div><div className="flex items-center gap-2 text-xs text-stone-400"><span>Workspace</span><ChevronRight size={12}/><span className="text-latte-700">Data Santri</span></div><h2 className="mt-2 font-display text-2xl font-extrabold text-latte-900">Data Santri</h2><p className="mt-1 text-sm text-stone-500">Kelola profil, penempatan, dan status santri.</p><div className="mt-2"><Badge tone={genderFilter === 'Ikhwan' ? 'brown' : genderFilter === 'Akhwat' ? 'blue' : 'neutral'}>Tampilan: {genderFilter === 'Semua' ? 'Semua santri' : genderFilter}</Badge></div></div>{role !== 'Santri' && <Button icon={Plus} onClick={openAdd}>Tambah Santri</Button>}</div>
     <div className="grid gap-3 sm:grid-cols-3"><div className="rounded-2xl border border-[#eee5da] bg-white p-4"><p className="text-xs text-stone-500">Total santri</p><p className="mt-2 font-display text-2xl font-extrabold text-latte-900">{santri.length}</p></div><div className="rounded-2xl border border-[#eee5da] bg-white p-4"><p className="text-xs text-stone-500">Ikhwan</p><p className="mt-2 font-display text-2xl font-extrabold text-latte-900">{santri.filter(s => s.gender === 'Ikhwan').length}</p></div><div className="rounded-2xl border border-[#eee5da] bg-white p-4"><p className="text-xs text-stone-500">Akhwat</p><p className="mt-2 font-display text-2xl font-extrabold text-latte-900">{santri.filter(s => s.gender === 'Akhwat').length}</p></div></div>
     <section className="overflow-hidden rounded-2xl border border-[#eee5da] bg-white shadow-soft">
       <div className="flex flex-wrap items-center gap-3 border-b border-stone-100 p-4"><div className="relative min-w-[200px] flex-1"><Search className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" size={15}/><input value={query} onChange={e => setQuery(e.target.value)} placeholder="Cari nama atau NIS..." className="w-full rounded-xl border border-stone-200 bg-latte-50/50 py-2.5 pl-9 pr-3 text-xs outline-none transition focus:border-latte-400 focus:ring-2 focus:ring-latte-100"/></div><label className="flex items-center gap-2 rounded-xl border border-stone-200 bg-white px-3 py-2.5 text-xs font-semibold text-stone-500"><Users size={14}/><span>Kategori</span><select aria-label="Filter kategori santri" value={genderFilter} onChange={e => setGenderFilter(e.target.value)} className="max-w-[125px] bg-transparent text-xs font-bold text-stone-700 outline-none"><option value="Semua">Semua santri</option><option value="Ikhwan">Ikhwan</option><option value="Akhwat">Akhwat</option></select></label><Button variant="outline" icon={Download} onClick={() => alert('Demo: ekspor CSV/PDF akan dihubungkan pada tahap backend.')}>Ekspor</Button></div>
@@ -397,7 +397,7 @@ function GenericPage({ page, role, genderFilter, setGenderFilter }) {
     return matchesSearch && matchesFilter
   })
   return <div className="space-y-5">
-    <div className="flex flex-wrap items-end justify-between gap-3"><div><div className="flex items-center gap-2 text-xs text-stone-400"><span>Workspace</span><ChevronRight size={12}/><span className="text-latte-700">{page}</span></div><h2 className="mt-2 font-display text-2xl font-extrabold text-latte-900">{page}</h2><p className="mt-1 text-sm text-stone-500">{cfg.sub}</p></div><div className="flex gap-2"><Button variant="outline" icon={Download} onClick={() => alert('Demo: ekspor laporan akan diaktifkan setelah integrasi backend.')}>Ekspor</Button>{page !== 'Laporan PDF' && page !== 'Audit Log' && page !== 'Pengaturan' && <Button icon={Plus} onClick={() => setShowModal(true)}>Tambah Data</Button>}</div></div>
+    <div className="flex flex-wrap items-end justify-between gap-3"><div><div className="flex items-center gap-2 text-xs text-stone-400"><span>Workspace</span><ChevronRight size={12}/><span className="text-latte-700">{page}</span></div><h2 className="mt-2 font-display text-2xl font-extrabold text-latte-900">{page}</h2><p className="mt-1 text-sm text-stone-500">{cfg.sub}</p>{genderFilteredPage && <div className="mt-2"><Badge tone={genderFilter === 'Ikhwan' ? 'brown' : genderFilter === 'Akhwat' ? 'blue' : 'neutral'}>Tampilan: {genderFilter === 'Semua' ? 'Semua santri' : genderFilter}</Badge></div>}</div><div className="flex gap-2"><Button variant="outline" icon={Download} onClick={() => alert('Demo: ekspor laporan akan diaktifkan setelah integrasi backend.')}>Ekspor</Button>{page !== 'Laporan PDF' && page !== 'Audit Log' && page !== 'Pengaturan' && <Button icon={Plus} onClick={() => setShowModal(true)}>Tambah Data</Button>}</div></div>
     <div className="grid gap-3 sm:grid-cols-3">{cfg.stats.map(([label, value, tone]) => <div key={label} className="rounded-2xl border border-[#eee5da] bg-white p-4 shadow-soft"><p className="text-xs text-stone-500">{label}</p><p className="mt-2 font-display text-2xl font-extrabold text-latte-900">{value}</p><div className="mt-2"><Badge tone={tone === 'green' ? 'green' : tone === 'amber' ? 'amber' : tone === 'red' ? 'red' : 'brown'}>Data demo</Badge></div></div>)}</div>
     <section className="overflow-hidden rounded-2xl border border-[#eee5da] bg-white shadow-soft">
       <div className="flex flex-wrap items-center gap-3 border-b border-stone-100 p-4"><div className="relative min-w-[200px] flex-1"><Search className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" size={15}/><input value={search} onChange={e => setSearch(e.target.value)} placeholder={`Cari ${page.toLowerCase()}...`} className="w-full rounded-xl border border-stone-200 bg-latte-50/50 py-2.5 pl-9 pr-3 text-xs outline-none focus:border-latte-400"/></div><div className="flex items-center gap-2 rounded-xl border border-stone-200 px-3 py-2.5 text-xs font-semibold text-stone-500">{genderFilteredPage ? <Users size={14}/> : <Filter size={14}/>}<select aria-label={genderFilteredPage ? 'Filter kategori santri' : 'Filter data'} value={genderFilteredPage ? genderFilter : filter} onChange={e => genderFilteredPage ? setGenderFilter(e.target.value) : setFilter(e.target.value)} className="max-w-[160px] bg-transparent outline-none">{genderFilteredPage ? <><option value="Semua">Semua santri</option><option value="Ikhwan">Ikhwan</option><option value="Akhwat">Akhwat</option></> : <><option>Semua</option><option>Aktif</option><option>Hadir</option><option>Ikhwan</option><option>Akhwat</option><option>Selesai</option><option>Cabang</option></>}</select></div></div>
@@ -466,6 +466,13 @@ export default function App() {
     return () => window.removeEventListener('navigate', handler)
   }, [])
 
+  // Keep the gender dropdown visible whenever one of the gender-based modules is active.
+  useEffect(() => {
+    if (['Absensi Sholat', 'Absensi Kegiatan', 'Tahfidz', 'Data Santri'].includes(page)) {
+      setExpandedGenderMenus(current => ({ ...current, [page]: true }))
+    }
+  }, [page])
+
   if (!loggedIn) return <LoginPage onLogin={(email) => { setRole(email.toLowerCase().includes('santri') ? 'Santri' : email.toLowerCase().includes('admin.') ? 'Admin Cabang' : 'Super Admin'); setLoggedIn(true); setPage('Dashboard') }} />
 
   const roleOptions = ['Super Admin', 'Admin Cabang', 'Santri']
@@ -489,7 +496,7 @@ export default function App() {
                 <div className={`flex w-full items-center rounded-xl transition ${page === name ? 'bg-latte-700 text-white shadow-sm' : 'text-stone-500 hover:bg-latte-100 hover:text-latte-800'}`}>
                   <button onClick={() => {
                     setPage(name)
-                    if (hasGenderSubmenu) setExpandedGenderMenus(current => ({ ...current, [name]: !current[name] }))
+                    if (hasGenderSubmenu) setExpandedGenderMenus(current => ({ ...current, [name]: true }))
                     else setSidebarOpen(false)
                   }} className="group flex min-w-0 flex-1 items-center gap-3 rounded-xl px-3 py-2.5 text-left text-xs font-semibold">
                     <Icon size={16} strokeWidth={page === name ? 2.4 : 1.9}/><span className="flex-1">{name}</span>
@@ -498,14 +505,18 @@ export default function App() {
                   {hasGenderSubmenu && <button aria-label={`${isExpanded ? 'Tutup' : 'Buka'} pilihan ${name}`} aria-expanded={isExpanded} onClick={() => setExpandedGenderMenus(current => ({ ...current, [name]: !current[name] }))} className={`mr-2 rounded-lg p-1.5 transition ${page === name ? 'text-latte-100 hover:bg-white/10' : 'text-stone-400 hover:bg-white'}`}><ChevronDown size={14} className={`transition-transform ${isExpanded ? 'rotate-180' : ''}`}/></button>}
                 </div>
                 {hasGenderSubmenu && isExpanded && <div className="ml-7 mt-1 space-y-1 border-l border-latte-200 pl-3">
-                  {['Ikhwan', 'Akhwat'].map(gender => {
-                    const selected = page === name && genderByModule[name] === gender
-                    return <button key={gender} onClick={() => {
+                  {[
+                    { label: 'Semua Santri', value: 'Semua' },
+                    { label: 'Ikhwan', value: 'Ikhwan' },
+                    { label: 'Akhwat', value: 'Akhwat' },
+                  ].map(option => {
+                    const selected = page === name && genderByModule[name] === option.value
+                    return <button key={option.value} onClick={() => {
                       setPage(name)
-                      setGenderByModule(current => ({ ...current, [name]: gender }))
+                      setGenderByModule(current => ({ ...current, [name]: option.value }))
                       setSidebarOpen(false)
                     }} className={`flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-[11px] font-semibold transition ${selected ? 'bg-latte-100 text-latte-800' : 'text-stone-500 hover:bg-latte-50 hover:text-latte-800'}`}>
-                      <span className={`h-1.5 w-1.5 rounded-full ${selected ? 'bg-latte-700' : 'bg-latte-300'}`}/>{gender}
+                      <span className={`h-1.5 w-1.5 rounded-full ${selected ? 'bg-latte-700' : 'bg-latte-300'}`}/>{option.label}
                       {selected && <Check size={12} className="ml-auto"/>}
                     </button>
                   })}
@@ -529,7 +540,7 @@ export default function App() {
       </header>
       <main className="mx-auto max-w-[1600px] px-4 py-6 sm:px-7 sm:py-8 xl:px-9">
         {page === 'Dashboard' ? (isStudent ? <StudentPortal santri={santri}/> : <Dashboard role={role} santri={santri} activities={activities}/>) : page === 'Data Santri' ? <SantriPage santri={santri} setSantri={setSantri} role={role} genderFilter={genderByModule['Data Santri']} setGenderFilter={gender => setGenderByModule(current => ({ ...current, 'Data Santri': gender }))}/> : page === 'Kegiatan' ? <ActivitiesPage activities={activities} setActivities={setActivities} role={role}/> : <GenericPage page={page} role={role} genderFilter={genderByModule[page] || 'Semua'} setGenderFilter={gender => setGenderByModule(current => ({ ...current, [page]: gender }))}/>}
-        <footer className="mt-8 flex flex-wrap items-center justify-between gap-2 border-t border-[#e9dfd3] pt-5 text-[10px] text-stone-400"><p>© 2026 E-Absensi Darun Nahdhah <span className="mx-1">·</span> Frontend preview v0.2.1</p><p className="flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-emerald-500"/> Data demo · Belum terhubung backend</p></footer>
+        <footer className="mt-8 flex flex-wrap items-center justify-between gap-2 border-t border-[#e9dfd3] pt-5 text-[10px] text-stone-400"><p>© 2026 E-Absensi Darun Nahdhah <span className="mx-1">·</span> Frontend preview v0.2.2</p><p className="flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-emerald-500"/> Data demo · Belum terhubung backend</p></footer>
       </main>
     </div>
     {dark && <style>{`.dark-mode{filter:none;background:#211c18;color:#f6f0e8}.dark-mode aside,.dark-mode header,.dark-mode main .bg-white{background:#302821!important;color:#f6f0e8!important}.dark-mode main .text-latte-900,.dark-mode header .text-latte-900{color:#f6f0e8!important}.dark-mode main .border-\\[\\#eee5da\\],.dark-mode header{border-color:#4c3c30!important}.dark-mode main .text-stone-500,.dark-mode main .text-stone-400{color:#c3b6a8!important}.dark-mode main .bg-\\[\\#f7f4ef\\]{background:#211c18!important}`}</style>}

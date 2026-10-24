@@ -87,3 +87,9 @@
 - Urutan workspace: Dashboard → Absensi Sholat → Absensi Kegiatan → Tahfidz → Data Santri → Kegiatan.
 - Sidebar menyediakan submenu Ikhwan dan Akhwat pada Absensi Sholat, Absensi Kegiatan, Tahfidz, dan Data Santri.
 - Memilih submenu gender mengubah filter data tabel pada modul yang dipilih.
+
+
+## Pemisahan data Ikhwan/Akhwat (v0.2.2)
+- Dropdown sidebar pada Absensi Sholat, Absensi Kegiatan, Tahfidz, dan Data Santri.
+- Pilihan Semua Santri, Ikhwan, dan Akhwat.
+- Filter sidebar menyinkronkan filter tabel pada modul terpilih.
