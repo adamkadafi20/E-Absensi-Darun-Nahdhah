@@ -81,3 +81,9 @@
 
 ## Komponen lintas modul
 - Sidebar responsif, header, pencarian, filter, statistik, badge status, dropdown role, notifikasi, mode gelap pratinjau.
+
+
+## Pembaruan UI v0.2.1
+- Urutan workspace: Dashboard → Absensi Sholat → Absensi Kegiatan → Tahfidz → Data Santri → Kegiatan.
+- Sidebar menyediakan submenu Ikhwan dan Akhwat pada Absensi Sholat, Absensi Kegiatan, Tahfidz, dan Data Santri.
+- Memilih submenu gender mengubah filter data tabel pada modul yang dipilih.

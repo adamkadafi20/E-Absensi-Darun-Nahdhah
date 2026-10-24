@@ -1,4 +1,4 @@
-# E-Absensi Darun Nahdhah — Frontend Preview
+# E-Absensi Darun Nahdhah — Frontend Preview v0.2.1
 
 Starter frontend React + Vite + Tailwind CSS untuk rancangan UI E-Absensi Darun Nahdhah. Tampilan menggunakan gaya SaaS modern dengan palet coklat susu, krem, dan putih. Project disiapkan agar dapat di-deploy sebagai frontend statis di Vercel.
 
@@ -38,6 +38,11 @@ File `vercel.json` sudah mengatur output build dan rewrite ke `index.html` agar 
 
 ### Jika project berada di dalam subfolder repository
 Import root folder yang berisi `package.json`, atau atur **Root Directory** di pengaturan project Vercel ke `e-absensi-darun-nahdhah` (sesuaikan dengan nama subfolder di repository). Jangan set Root Directory ke folder `src`.
+
+## Pembaruan v0.2.1
+- Urutan menu utama: Dashboard, Absensi Sholat, Absensi Kegiatan, Tahfidz, Data Santri, Kegiatan.
+- Empat menu terkait santri memiliki dropdown Ikhwan/Akhwat pada sidebar.
+- Pemilihan Ikhwan/Akhwat dari sidebar tersambung dengan filter tabel pada modul terkait.
 
 ## Demo interaksi
 - Navigasi sidebar untuk melihat modul.

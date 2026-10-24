@@ -74,3 +74,7 @@ E-Absensi Darun Nahdhah adalah aplikasi web untuk pengelolaan data santri dan mo
 - Generate PDF produksi.
 - Integrasi QR code, GPS, notifikasi, atau absensi otomatis yang belum disepakati.
 - Deployment produksi.
+
+
+## Navigasi dan pemisahan tampilan gender
+Enam menu utama di sidebar ditampilkan berurutan: Dashboard, Absensi Sholat, Absensi Kegiatan, Tahfidz, Data Santri, Kegiatan. Absensi Sholat, Absensi Kegiatan, Tahfidz, dan Data Santri menyediakan submenu Ikhwan/Akhwat. Memilih submenu menyaring baris data berdasarkan jenis kelamin; pilihan filter juga tersedia pada halaman tabel.
