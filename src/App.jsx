@@ -372,14 +372,64 @@ function ActivitiesPage({ activities, setActivities, role }) {
 function GenericPage({ page, role, genderFilter, setGenderFilter }) {
   const [search, setSearch] = useState('')
   const [filter, setFilter] = useState('Semua')
+  const [selectedBranch, setSelectedBranch] = useState('Semua')
+  const [selectedDorm, setSelectedDorm] = useState('Semua')
+  const [selectedDate, setSelectedDate] = useState('')
   const [showModal, setShowModal] = useState(false)
   const genderFilteredPage = ['Absensi Sholat', 'Absensi Kegiatan', 'Tahfidz'].includes(page)
-  useEffect(() => { setFilter('Semua'); setSearch('') }, [page])
+  const attendanceFilterPages = ['Absensi Sholat', 'Absensi Kegiatan', 'Tahfidz'].includes(page)
+  useEffect(() => {
+    setFilter('Semua')
+    setSearch('')
+    setSelectedBranch('Semua')
+    setSelectedDorm('Semua')
+    setSelectedDate('')
+  }, [page])
+
   const configs = {
-    'Absensi Sholat': { sub: 'Catat kehadiran sholat berjamaah dan pantau kedisiplinan ibadah.', icon: ClipboardCheck, stats: [['Hadir hari ini','182','green'],['Izin','6','amber'],['Tidak hadir','4','red']], cols: ['Nama Santri','Jenis Kelamin','Subuh','Dzuhur','Ashar','Maghrib','Isya','Rekap'], rows: [['Ahmad Fauzan','Ikhwan','Hadir','Hadir','Hadir','Hadir','Hadir','100%'],['Muhammad Rizki','Ikhwan','Hadir','Hadir','Izin','Hadir','Hadir','80%'],['Aisyah Humaira','Akhwat','Hadir','Hadir','Hadir','Hadir','Hadir','100%'],['Abdullah Hakim','Ikhwan','Tidak hadir','Hadir','Hadir','Hadir','Izin','60%'],['Fatimah Zahra','Akhwat','Hadir','Hadir','Hadir','Hadir','Hadir','100%']] },
-    'Absensi Kegiatan': { sub: 'Catat kehadiran santri pada setiap kegiatan, dengan tampilan rekap serupa absensi sholat.', icon: CalendarCheck, stats: [['Hadir hari ini','174','green'],['Izin','10','amber'],['Tidak hadir','8','red']], cols: ['Nama Santri','Jenis Kelamin','Kegiatan','Waktu','Status Kehadiran','Cabang'], rows: [['Ahmad Fauzan','Ikhwan','Kajian Kitab Akhlak','08.00','Hadir','Pusat Darun Nahdhah'],['Muhammad Rizki','Ikhwan','Kajian Kitab Akhlak','08.00','Izin','Pusat Darun Nahdhah'],['Aisyah Humaira','Akhwat','Setoran Tahfidz Pagi','06.00','Hadir','Cabang Depok'],['Fatimah Zahra','Akhwat','Muhadharah Santri','19.30','Hadir','Cabang Depok'],['Abdullah Hakim','Ikhwan','Kerja Bakti Asrama','07.00','Tidak hadir','Cabang Bogor'],['Nadia Safitri','Akhwat','Kajian Kitab Akhlak','08.00','Izin','Cabang Bogor']] },
+    'Absensi Sholat': {
+      sub: 'Catat kehadiran sholat berjamaah. Filter berdasarkan kategori santri, cabang, asrama, dan tanggal.',
+      icon: ClipboardCheck,
+      stats: [['Hadir hari ini','182','green'],['Izin','6','amber'],['Sakit / terlambat','8','red']],
+      cols: ['Nama Santri','Jenis Kelamin','Subuh','Dzuhur','Ashar','Maghrib','Isya','Rekap','Cabang','Asrama','Tanggal'],
+      rows: [
+        ['Ahmad Fauzan','Ikhwan','Hadir','Hadir','Hadir','Hadir','Hadir','100%','Pusat Darun Nahdhah','Asrama Al-Falah',toDateKey()],
+        ['Muhammad Rizki','Ikhwan','Hadir','Terlambat','Izin','Hadir','Hadir','80%','Pusat Darun Nahdhah','Asrama Al-Ikhlas',toDateKey()],
+        ['Aisyah Humaira','Akhwat','Hadir','Hadir','Hadir','Hadir','Hadir','100%','Cabang Depok','Asrama An-Nisa',toDateKey()],
+        ['Abdullah Hakim','Ikhwan','Tidak hadir','Hadir','Sakit','Hadir','Izin','60%','Cabang Bogor','Asrama Al-Falah',addDaysToKey(-1)],
+        ['Fatimah Zahra','Akhwat','Hadir','Hadir','Hadir','Terlambat','Hadir','80%','Cabang Depok','Asrama An-Nisa',addDaysToKey(-1)],
+        ['Nadia Safitri','Akhwat','Sakit','Hadir','Hadir','Hadir','Hadir','80%','Cabang Bogor','Asrama An-Nisa',toDateKey()],
+      ],
+    },
+    'Absensi Kegiatan': {
+      sub: 'Catat kehadiran santri dalam kegiatan dengan pola yang serupa absensi sholat.',
+      icon: CalendarCheck,
+      stats: [['Hadir hari ini','174','green'],['Izin','10','amber'],['Sakit / terlambat','14','red']],
+      cols: ['Nama Santri','Jenis Kelamin','Kegiatan','Waktu','Status Kehadiran','Cabang','Asrama','Tanggal'],
+      rows: [
+        ['Ahmad Fauzan','Ikhwan','Kajian Kitab Akhlak','08.00','Hadir','Pusat Darun Nahdhah','Asrama Al-Falah',toDateKey()],
+        ['Muhammad Rizki','Ikhwan','Kajian Kitab Akhlak','08.00','Terlambat','Pusat Darun Nahdhah','Asrama Al-Ikhlas',toDateKey()],
+        ['Aisyah Humaira','Akhwat','Setoran Tahfidz Pagi','06.00','Hadir','Cabang Depok','Asrama An-Nisa',toDateKey()],
+        ['Fatimah Zahra','Akhwat','Muhadharah Santri','19.30','Sakit','Cabang Depok','Asrama An-Nisa',addDaysToKey(-1)],
+        ['Abdullah Hakim','Ikhwan','Kerja Bakti Asrama','07.00','Tidak hadir','Cabang Bogor','Asrama Al-Falah',addDaysToKey(-1)],
+        ['Nadia Safitri','Akhwat','Kajian Kitab Akhlak','08.00','Izin','Cabang Bogor','Asrama An-Nisa',toDateKey()],
+      ],
+    },
     'Kegiatan': { sub: 'Kelola jadwal kegiatan dan daftar kehadiran peserta.', icon: CalendarDays, stats: [['Kegiatan aktif','12','green'],['Selesai hari ini','4','blue'],['Akan datang','8','amber']], cols: ['Nama Kegiatan','Tanggal','Waktu','Peserta','Cabang','Status'], rows: [['Kajian Kitab Akhlak','23 Okt 2026','08.00','192','Pusat','Terjadwal'],['Setoran Tahfidz Pagi','23 Okt 2026','06.00','176','Semua cabang','Berlangsung'],['Muhadharah Jumat','24 Okt 2026','19.30','88','Cabang Depok','Akan datang'],['Kerja Bakti Asrama','25 Okt 2026','07.00','64','Cabang Bogor','Akan datang']] },
-    'Tahfidz': { sub: 'Pantau target, setoran, dan progres hafalan Al-Qur’an.', icon: BookOpen, stats: [['Setoran minggu ini','326','green'],['Target tercapai','78%','blue'],['Perlu evaluasi','18','amber']], cols: ['Nama Santri','Jenis Kelamin','Jenis Setoran','Surah / Ayat','Nilai','Pengajar','Tanggal'], rows: [['Ahmad Fauzan','Ikhwan','Hafalan baru','Al-Baqarah 1–10','A','Ust. Hamdan','23 Okt 2026'],['Aisyah Humaira','Akhwat','Murojaah','An-Nisa 1–15','A+','Usth. Maryam','23 Okt 2026'],['Muhammad Rizki','Ikhwan','Hafalan baru','Ali Imran 1–8','B+','Ust. Hamdan','22 Okt 2026'],['Fatimah Zahra','Akhwat','Murojaah','Yasin 1–20','A','Usth. Maryam','22 Okt 2026'],['Nadia Safitri','Akhwat','Hafalan baru','Al-Mulk 1–10','A','Usth. Maryam','22 Okt 2026']] },
+    'Tahfidz': {
+      sub: 'Pantau target dan progres hafalan Al-Qur’an dengan filter kategori, cabang, asrama, dan tanggal setoran.',
+      icon: BookOpen,
+      stats: [['Setoran minggu ini','326','green'],['Target tercapai','78%','blue'],['Perlu evaluasi','18','amber']],
+      cols: ['Nama Santri','Jenis Kelamin','Jenis Setoran','Surah / Ayat','Nilai','Pengajar','Tanggal','Cabang','Asrama'],
+      rows: [
+        ['Ahmad Fauzan','Ikhwan','Hafalan baru','Al-Baqarah 1–10','A','Ust. Hamdan',toDateKey(),'Pusat Darun Nahdhah','Asrama Al-Falah'],
+        ['Aisyah Humaira','Akhwat','Murojaah','An-Nisa 1–15','A+','Usth. Maryam',toDateKey(),'Cabang Depok','Asrama An-Nisa'],
+        ['Muhammad Rizki','Ikhwan','Hafalan baru','Ali Imran 1–8','B+','Ust. Hamdan',addDaysToKey(-1),'Pusat Darun Nahdhah','Asrama Al-Ikhlas'],
+        ['Fatimah Zahra','Akhwat','Murojaah','Yasin 1–20','A','Usth. Maryam',addDaysToKey(-1),'Cabang Depok','Asrama An-Nisa'],
+        ['Nadia Safitri','Akhwat','Hafalan baru','Al-Mulk 1–10','A','Usth. Maryam',addDaysToKey(-2),'Cabang Bogor','Asrama An-Nisa'],
+        ['Abdullah Hakim','Ikhwan','Murojaah','Al-Kahfi 1–10','B','Ust. Hamdan',addDaysToKey(-2),'Cabang Bogor','Asrama Al-Falah'],
+      ],
+    },
     'Hukuman': { sub: 'Kelola catatan pelanggaran dan tindak lanjut pembinaan.', icon: ShieldCheck, stats: [['Catatan bulan ini','24','amber'],['Selesai ditindaklanjuti','18','green'],['Dalam proses','6','red']], cols: ['Santri','Pelanggaran','Tingkat','Tanggal','Status'], rows: [['Abdullah Hakim','Terlambat berjamaah','Ringan','22 Okt 2026','Dalam proses'],['Muhammad Rizki','Tidak mengikuti piket','Ringan','21 Okt 2026','Selesai'],['Santri DN-23918','Tidak hadir kegiatan','Sedang','20 Okt 2026','Selesai']] },
     'Reward': { sub: 'Dokumentasikan prestasi dan apresiasi bagi santri.', icon: Award, stats: [['Reward bulan ini','38','green'],['Santri berprestasi','31','blue'],['Total poin','1.240','amber']], cols: ['Penerima','Reward','Alasan','Tanggal','Poin'], rows: [['Aisyah Humaira','Hafalan terbaik','Mencapai target 10 juz','22 Okt 2026','100'],['Ahmad Fauzan','Teladan disiplin','Kehadiran 100%','21 Okt 2026','50'],['Fatimah Zahra','Prestasi akademik','Nilai kajian terbaik','19 Okt 2026','75']] },
     'Asrama': { sub: 'Atur unit asrama, kapasitas, dan penempatan santri.', icon: House, stats: [['Total asrama','12','brown'],['Kapasitas terisi','86%','green'],['Perlu peninjauan','2','amber']], cols: ['Nama Asrama','Kategori','Cabang','Penghuni','Kapasitas','Status'], rows: [['Asrama Al-Falah','Ikhwan','Pusat Darun Nahdhah','86','100','Aktif'],['Asrama Al-Ikhlas','Ikhwan','Pusat Darun Nahdhah','72','80','Aktif'],['Asrama An-Nisa','Akhwat','Cabang Depok','64','75','Aktif'],['Asrama Al-Madinah','Ikhwan','Cabang Bogor','48','60','Aktif']] },
@@ -389,21 +439,57 @@ function GenericPage({ page, role, genderFilter, setGenderFilter }) {
     'Audit Log': { sub: 'Telusuri aktivitas penting untuk menjaga akuntabilitas data.', icon: Activity, stats: [['Aktivitas hari ini','246','green'],['Login berhasil','128','blue'],['Perlu ditinjau','2','amber']], cols: ['Pengguna','Aktivitas','Modul','Waktu','Alamat IP','Status'], rows: [['admin.pusat','Memperbarui absensi','Absensi Sholat','10.24','192.168.1.10','Berhasil'],['superadmin','Membuat akun admin','Pengguna','09.51','192.168.1.2','Berhasil'],['admin.depok','Mengubah data santri','Data Santri','09.16','192.168.1.18','Berhasil']] },
     'Pengaturan': { sub: 'Konfigurasi dasar aplikasi dan preferensi operasional.', icon: Settings, stats: [['Status sistem','Normal','green'],['Zona waktu','WIB','brown'],['Versi aplikasi','0.1.0','blue']], cols: ['Pengaturan','Nilai saat ini','Keterangan'], rows: [['Nama aplikasi','E-Absensi Darun Nahdhah','Identitas sistem'],['Zona waktu','Asia/Jakarta (WIB)','Waktu pencatatan'],['Format tanggal','DD MMM YYYY','Format tampilan'],['Backup database','Belum terhubung','Konfigurasi backend']] },
   }
+
   const cfg = configs[page] || configs.Kegiatan
   const Icon = cfg.icon
+  const metadataIndexes = {
+    'Absensi Sholat': { branch: 8, dorm: 9, date: 10 },
+    'Absensi Kegiatan': { branch: 5, dorm: 6, date: 7 },
+    'Tahfidz': { branch: 7, dorm: 8, date: 6 },
+  }
+  const meta = metadataIndexes[page]
+  const branches = meta ? [...new Set(cfg.rows.map(row => row[meta.branch]))] : []
+  const dorms = meta ? [...new Set(cfg.rows.filter(row => selectedBranch === 'Semua' || row[meta.branch] === selectedBranch).map(row => row[meta.dorm]))] : []
   const filteredRows = cfg.rows.filter(row => {
     const matchesSearch = row.join(' ').toLowerCase().includes(search.toLowerCase())
-    const matchesFilter = genderFilteredPage ? (genderFilter === 'Semua' || row[1] === genderFilter) : (filter === 'Semua' || row.some(cell => cell.toLowerCase().includes(filter.toLowerCase())))
-    return matchesSearch && matchesFilter
+    const matchesGender = !genderFilteredPage || genderFilter === 'Semua' || row[1] === genderFilter
+    const matchesBranch = !meta || selectedBranch === 'Semua' || row[meta.branch] === selectedBranch
+    const matchesDorm = !meta || selectedDorm === 'Semua' || row[meta.dorm] === selectedDorm
+    const matchesDate = !meta || !selectedDate || row[meta.date] === selectedDate
+    const matchesOtherFilter = genderFilteredPage || filter === 'Semua' || row.some(cell => String(cell).toLowerCase().includes(filter.toLowerCase()))
+    return matchesSearch && matchesGender && matchesBranch && matchesDorm && matchesDate && matchesOtherFilter
   })
+
+  const renderCell = (cell, j) => {
+    if (meta && j === meta.date) return <span className="whitespace-nowrap">{formatDateID(cell, { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+    if (cell === 'Ikhwan') return <Badge tone="brown">{cell}</Badge>
+    if (cell === 'Akhwat') return <Badge tone="blue">{cell}</Badge>
+    if (['Aktif', 'Berhasil', 'Selesai', 'Hadir'].includes(cell)) return <Badge tone="green">{cell}</Badge>
+    if (['Dalam proses', 'Perlu perhatian', 'Izin', 'Terlambat'].includes(cell)) return <Badge tone="amber">{cell}</Badge>
+    if (cell === 'Sakit') return <Badge tone="blue">{cell}</Badge>
+    if (['Tidak hadir', 'Nonaktif'].includes(cell)) return <Badge tone="red">{cell}</Badge>
+    if (page === 'Laporan PDF' && cell === 'Unduh PDF') return <button onClick={() => alert('Demo: file PDF akan dibuat dari data backend.')} className="inline-flex items-center gap-1 font-bold text-latte-700 hover:underline"><Download size={13}/> {cell}</button>
+    return cell
+  }
+
   return <div className="space-y-5">
     <div className="flex flex-wrap items-end justify-between gap-3"><div><div className="flex items-center gap-2 text-xs text-stone-400"><span>Workspace</span><ChevronRight size={12}/><span className="text-latte-700">{page}</span></div><h2 className="mt-2 font-display text-2xl font-extrabold text-latte-900">{page}</h2><p className="mt-1 text-sm text-stone-500">{cfg.sub}</p>{genderFilteredPage && <div className="mt-2"><Badge tone={genderFilter === 'Ikhwan' ? 'brown' : genderFilter === 'Akhwat' ? 'blue' : 'neutral'}>Tampilan: {genderFilter === 'Semua' ? 'Semua santri' : genderFilter}</Badge></div>}</div><div className="flex gap-2"><Button variant="outline" icon={Download} onClick={() => alert('Demo: ekspor laporan akan diaktifkan setelah integrasi backend.')}>Ekspor</Button>{page !== 'Laporan PDF' && page !== 'Audit Log' && page !== 'Pengaturan' && <Button icon={Plus} onClick={() => setShowModal(true)}>Tambah Data</Button>}</div></div>
     <div className="grid gap-3 sm:grid-cols-3">{cfg.stats.map(([label, value, tone]) => <div key={label} className="rounded-2xl border border-[#eee5da] bg-white p-4 shadow-soft"><p className="text-xs text-stone-500">{label}</p><p className="mt-2 font-display text-2xl font-extrabold text-latte-900">{value}</p><div className="mt-2"><Badge tone={tone === 'green' ? 'green' : tone === 'amber' ? 'amber' : tone === 'red' ? 'red' : 'brown'}>Data demo</Badge></div></div>)}</div>
     <section className="overflow-hidden rounded-2xl border border-[#eee5da] bg-white shadow-soft">
-      <div className="flex flex-wrap items-center gap-3 border-b border-stone-100 p-4"><div className="relative min-w-[200px] flex-1"><Search className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" size={15}/><input value={search} onChange={e => setSearch(e.target.value)} placeholder={`Cari ${page.toLowerCase()}...`} className="w-full rounded-xl border border-stone-200 bg-latte-50/50 py-2.5 pl-9 pr-3 text-xs outline-none focus:border-latte-400"/></div><div className="flex items-center gap-2 rounded-xl border border-stone-200 px-3 py-2.5 text-xs font-semibold text-stone-500">{genderFilteredPage ? <Users size={14}/> : <Filter size={14}/>}<select aria-label={genderFilteredPage ? 'Filter kategori santri' : 'Filter data'} value={genderFilteredPage ? genderFilter : filter} onChange={e => genderFilteredPage ? setGenderFilter(e.target.value) : setFilter(e.target.value)} className="max-w-[160px] bg-transparent outline-none">{genderFilteredPage ? <><option value="Semua">Semua santri</option><option value="Ikhwan">Ikhwan</option><option value="Akhwat">Akhwat</option></> : <><option>Semua</option><option>Aktif</option><option>Hadir</option><option>Ikhwan</option><option>Akhwat</option><option>Selesai</option><option>Cabang</option></>}</select></div></div>
-      <div className="overflow-x-auto"><table className="w-full min-w-[700px] text-left"><thead className="bg-latte-50/70"><tr>{cfg.cols.map(col => <th key={col} className="px-5 py-3 text-[10px] font-bold uppercase tracking-wider text-stone-400">{col}</th>)}</tr></thead><tbody>{filteredRows.map((row, i) => <tr key={row.join('-')} className="border-t border-stone-100 hover:bg-latte-50/40">{row.map((cell, j) => <td key={j} className="px-5 py-4 text-xs text-stone-600">{j === 0 ? <span className="font-extrabold text-latte-900">{cell}</span> : cell === 'Ikhwan' ? <Badge tone="brown">{cell}</Badge> : cell === 'Akhwat' ? <Badge tone="blue">{cell}</Badge> : (cell === 'Aktif' || cell === 'Berhasil' || cell === 'Selesai') ? <Badge tone="green">{cell}</Badge> : (cell === 'Dalam proses' || cell === 'Perlu perhatian' || cell === 'Izin') ? <Badge tone="amber">{cell}</Badge> : cell === 'Tidak hadir' ? <Badge tone="red">{cell}</Badge> : cell === 'Hadir' ? <Badge tone="green">{cell}</Badge> : page === 'Laporan PDF' && cell === 'Unduh PDF' ? <button onClick={() => alert('Demo: file PDF akan dibuat dari data backend.')} className="inline-flex items-center gap-1 font-bold text-latte-700 hover:underline"><Download size={13}/> {cell}</button> : cell}</td>)}</tr>)}</tbody></table></div>
-      {filteredRows.length === 0 && <EmptyState title="Data tidak ditemukan" desc="Coba ubah kata kunci pencarian atau filter."/>}
-      <div className="border-t border-stone-100 px-5 py-3 text-[11px] text-stone-400">Menampilkan {filteredRows.length} data · Data dummy untuk preview UI</div>
+      <div className="flex flex-wrap items-center gap-3 border-b border-stone-100 p-4">
+        <div className="relative min-w-[190px] flex-1"><Search className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" size={15}/><input value={search} onChange={e => setSearch(e.target.value)} placeholder={`Cari ${page.toLowerCase()}...`} className="w-full rounded-xl border border-stone-200 bg-latte-50/50 py-2.5 pl-9 pr-3 text-xs outline-none focus:border-latte-400"/></div>
+        {genderFilteredPage && <div className="flex items-center gap-2 rounded-xl border border-stone-200 px-3 py-2.5 text-xs font-semibold text-stone-500"><Users size={14}/><select aria-label="Filter kategori santri" value={genderFilter} onChange={e => setGenderFilter(e.target.value)} className="max-w-[145px] bg-transparent outline-none"><option value="Semua">Semua santri</option><option value="Ikhwan">Ikhwan</option><option value="Akhwat">Akhwat</option></select></div>}
+        {meta && <>
+          <label className="flex items-center gap-2 rounded-xl border border-stone-200 px-3 py-2.5 text-xs font-semibold text-stone-500"><Building2 size={14}/><span className="hidden sm:inline">Cabang</span><select aria-label="Filter cabang" value={selectedBranch} onChange={e => { setSelectedBranch(e.target.value); setSelectedDorm('Semua') }} className="max-w-[160px] bg-transparent outline-none"><option value="Semua">Semua cabang</option>{branches.map(branch => <option key={branch} value={branch}>{branch}</option>)}</select></label>
+          <label className="flex items-center gap-2 rounded-xl border border-stone-200 px-3 py-2.5 text-xs font-semibold text-stone-500"><House size={14}/><span className="hidden sm:inline">Asrama</span><select aria-label="Filter asrama" value={selectedDorm} onChange={e => setSelectedDorm(e.target.value)} className="max-w-[155px] bg-transparent outline-none"><option value="Semua">Semua asrama</option>{dorms.map(dorm => <option key={dorm} value={dorm}>{dorm}</option>)}</select></label>
+          <label className="flex items-center gap-2 rounded-xl border border-stone-200 px-3 py-2.5 text-xs font-semibold text-stone-500"><CalendarDays size={14}/><span className="hidden sm:inline">Tanggal</span><input aria-label="Filter tanggal" type="date" value={selectedDate} onChange={e => setSelectedDate(e.target.value)} className="max-w-[145px] bg-transparent text-xs outline-none"/></label>
+          {(selectedBranch !== 'Semua' || selectedDorm !== 'Semua' || selectedDate) && <Button variant="ghost" onClick={() => { setSelectedBranch('Semua'); setSelectedDorm('Semua'); setSelectedDate('') }}>Reset filter</Button>}
+        </>}
+        {!genderFilteredPage && <div className="flex items-center gap-2 rounded-xl border border-stone-200 px-3 py-2.5 text-xs font-semibold text-stone-500"><Filter size={14}/><select value={filter} onChange={e => setFilter(e.target.value)} className="max-w-[160px] bg-transparent outline-none"><option>Semua</option><option>Aktif</option><option>Hadir</option><option>Ikhwan</option><option>Akhwat</option><option>Selesai</option><option>Cabang</option></select></div>}
+      </div>
+      <div className="overflow-x-auto"><table className="w-full min-w-[900px] text-left"><thead className="bg-latte-50/70"><tr>{cfg.cols.map(col => <th key={col} className="px-5 py-3 text-[10px] font-bold uppercase tracking-wider text-stone-400">{col}</th>)}</tr></thead><tbody>{filteredRows.map((row, i) => <tr key={`${page}-${row[0]}-${i}`} className="border-t border-stone-100 hover:bg-latte-50/40">{row.map((cell, j) => <td key={j} className="px-5 py-4 text-xs text-stone-600">{j === 0 ? <span className="font-extrabold text-latte-900">{cell}</span> : renderCell(cell, j)}</td>)}</tr>)}</tbody></table></div>
+      {filteredRows.length === 0 && <EmptyState title="Data tidak ditemukan" desc="Coba ubah kategori santri, cabang, asrama, tanggal, atau kata kunci pencarian."/>}
+      <div className="border-t border-stone-100 px-5 py-3 text-[11px] text-stone-400">Menampilkan {filteredRows.length} dari {cfg.rows.length} data · Data dummy</div>
     </section>
     {showModal && <div className="fixed inset-0 z-50 flex items-center justify-center bg-latte-900/35 p-4 backdrop-blur-sm"><div className="w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl"><div className="flex items-start justify-between"><div><div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-latte-100 text-latte-700"><Icon size={20}/></div><h3 className="mt-4 font-display text-xl font-extrabold text-latte-900">Tambah {page}</h3><p className="mt-1 text-xs leading-5 text-stone-500">Ini adalah pratinjau alur form. Form lengkap mengikuti skema data saat backend mulai dikerjakan.</p></div><button onClick={() => setShowModal(false)} className="rounded-xl p-2 text-stone-400 hover:bg-stone-100"><X size={18}/></button></div><div className="mt-5 rounded-xl border border-dashed border-latte-200 bg-latte-50 p-4 text-xs leading-5 text-stone-600"><p className="font-bold text-latte-800">Field yang akan disiapkan</p><p className="mt-2">Identitas data · kategori · cabang/asrama terkait · status · catatan tambahan</p></div><div className="mt-5 flex justify-end gap-2"><Button variant="outline" onClick={() => setShowModal(false)}>Batal</Button><Button onClick={() => {setShowModal(false); alert('Form CRUD lengkap akan diimplementasikan bertahap.')}}>Lanjutkan</Button></div></div></div>}
   </div>

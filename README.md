@@ -51,6 +51,8 @@ Import root folder yang berisi `package.json`, atau atur **Root Directory** di p
 - Halaman Data Santri memiliki pencarian, filter ikhwan/akhwat, tambah, edit, dan hapus data dummy.
 - Tombol tema pada header untuk pratinjau mode gelap.
 - Halaman modul memiliki tabel, pencarian/filter, statistik, dan dialog tambah data demo.
+- Absensi Sholat, Absensi Kegiatan, dan Tahfidz menyediakan filter kategori, cabang, asrama, dan tanggal.
+- Absensi Sholat dan Absensi Kegiatan menampilkan status Hadir, Izin, Sakit, Terlambat, dan Tidak hadir.
 
 ## Batasan saat ini
 - Seluruh data adalah dummy dan tersimpan di state browser selama sesi.

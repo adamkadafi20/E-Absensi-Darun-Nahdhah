@@ -39,8 +39,16 @@
 - Dropdown kategori santri: semua, ikhwan, atau akhwat.
 - Tambah, edit, hapus, lihat detail data dummy.
 
+## Filter absensi dan tahfidz
+- Filter kategori santri: Semua, Ikhwan, Akhwat.
+- Filter cabang dan asrama; pilihan asrama mengikuti cabang yang dipilih.
+- Filter tanggal dengan date picker untuk Absensi Sholat, Absensi Kegiatan, dan Tahfidz.
+- Reset filter cabang/asrama/tanggal.
+- Status kehadiran sholat dan kegiatan meliputi Hadir, Izin, Sakit, Terlambat, dan Tidak hadir.
+
 ## Absensi Sholat
-- Ringkasan hadir, izin, tidak hadir.
+- Ringkasan hadir, izin, sakit/terlambat, dan tidak hadir.
+- Filter berdasarkan cabang, asrama, tanggal, serta kategori santri.
 - Tabel status per waktu sholat.
 - Dropdown kategori santri: semua, ikhwan, atau akhwat.
 - Placeholder koreksi dan ekspor.
@@ -53,6 +61,7 @@
 
 ## Kegiatan
 - Statistik kegiatan.
+- Absensi kegiatan mendukung status Hadir, Izin, Sakit, Terlambat, dan Tidak hadir.
 - Daftar kegiatan, jadwal, peserta, cabang, status.
 - Dialog placeholder tambah kegiatan.
 

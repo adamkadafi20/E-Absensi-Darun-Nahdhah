@@ -30,7 +30,7 @@ E-Absensi Darun Nahdhah adalah aplikasi web untuk pengelolaan data santri dan mo
 2. Dashboard berbasis role.
 3. Data santri dan klasifikasi ikhwan/akhwat.
 4. Absensi sholat.
-5. Kegiatan dan absensi kegiatan.
+5. Kegiatan dan absensi kegiatan dengan status Hadir, Izin, Sakit, Terlambat, dan Tidak hadir.
 6. Tahfidz.
 7. Hukuman.
 8. Reward.
