@@ -3,12 +3,16 @@ import {
   Activity, AlarmClock, ArrowDownRight, ArrowRight, Award, Bell, BookOpen,
   Building2, CalendarDays, Check, ChevronDown, ChevronLeft, ChevronRight,
   CircleHelp, ClipboardCheck, Download, FileText, Filter, GraduationCap,
-  House, LayoutDashboard, LogOut, Menu, MoreHorizontal, Search, Settings,
+  History, House, LayoutDashboard, LogOut, Menu, MoreHorizontal, Search, Settings,
   ShieldCheck, SlidersHorizontal, Sparkles, Users, UserRound, UserCog,
   X, Moon, Sun, HeartHandshake, BookMarked, Clock3, TrendingUp, MapPin,
   Plus, Pencil, Trash2, Eye, LockKeyhole, KeyRound, ChevronUp, BadgeCheck,
   CircleAlert, CalendarCheck, ChartNoAxesCombined, PanelLeftClose
 } from 'lucide-react'
+import { Avatar, Badge, Button, EmptyState, StatCard, addDaysToKey, formatDateID, formatNumber, toDateKey } from './ui'
+import TahfidzPage from './tahfidz/TahfidzPage'
+import RiwayatPage from './tahfidz/RiwayatPage'
+import { createInitialJadwal, createInitialSetoran } from './data/tahfidz'
 
 const navGroups = [
   { label: 'WORKSPACE', items: [
@@ -16,6 +20,7 @@ const navGroups = [
     ['Absensi Sholat', ClipboardCheck],
     ['Absensi Kegiatan', CalendarCheck],
     ['Tahfidz', BookOpen],
+    ['Riwayat Setoran', History],
     ['Data Santri', Users],
     ['Kegiatan', CalendarDays],
   ]},
@@ -49,26 +54,6 @@ const activityRows = [
   { title: 'Sholat Dzuhur berjamaah', type: 'Sholat', time: '12.15', present: 0, total: 192, status: 'Terjadwal' },
 ]
 
-const formatNumber = (n) => new Intl.NumberFormat('id-ID').format(n)
-
-const toDateKey = (date = new Date()) => {
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const day = String(date.getDate()).padStart(2, '0')
-  return `${year}-${month}-${day}`
-}
-
-const addDaysToKey = (days) => {
-  const date = new Date()
-  date.setDate(date.getDate() + days)
-  return toDateKey(date)
-}
-
-const formatDateID = (dateKey, options = { day: 'numeric', month: 'long', year: 'numeric' }) => {
-  if (!dateKey) return '-'
-  return new Intl.DateTimeFormat('id-ID', options).format(new Date(`${dateKey}T12:00:00`))
-}
-
 const createInitialActivities = () => [
   { id: 'event-1', title: 'Kajian Kitab Akhlak', category: 'Kegiatan', date: addDaysToKey(0), time: '08:00', participants: 'Semua santri', branch: 'Pusat Darun Nahdhah', location: 'Aula utama', notes: 'Kajian rutin bersama pengasuh.' },
   { id: 'event-2', title: 'Setoran Tahfidz Bersama', category: 'Tahfidz', date: addDaysToKey(1), time: '06:00', participants: 'Kelompok tahfidz', branch: 'Semua Cabang', location: 'Ruang tahfidz', notes: 'Bawa buku mutabaah hafalan.' },
@@ -86,59 +71,6 @@ function Brand({ compact = false }) {
       <p className="font-display text-sm font-extrabold tracking-tight text-latte-900">Darun Nahdhah</p>
       <p className="mt-0.5 text-[10px] font-bold uppercase tracking-[.19em] text-latte-500">E-Absensi System</p>
     </div>}
-  </div>
-}
-
-function Badge({ children, tone = 'neutral' }) {
-  const tones = {
-    neutral: 'bg-stone-100 text-stone-600',
-    green: 'bg-emerald-50 text-emerald-700',
-    amber: 'bg-amber-50 text-amber-700',
-    red: 'bg-rose-50 text-rose-700',
-    brown: 'bg-latte-100 text-latte-700',
-    blue: 'bg-sky-50 text-sky-700',
-  }
-  return <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold ${tones[tone] || tones.neutral}`}>{children}</span>
-}
-
-function Button({ children, variant = 'primary', onClick, icon: Icon, className = '', type = 'button' }) {
-  const styles = variant === 'primary'
-    ? 'bg-latte-700 text-white hover:bg-latte-800 shadow-sm'
-    : variant === 'outline'
-      ? 'border border-latte-200 bg-white text-latte-800 hover:bg-latte-50'
-      : 'text-latte-600 hover:bg-latte-100'
-  return <button type={type} onClick={onClick} className={`inline-flex items-center justify-center gap-2 rounded-xl px-3.5 py-2.5 text-xs font-bold transition ${styles} ${className}`}>
-    {Icon && <Icon size={15} strokeWidth={2.2} />}{children}
-  </button>
-}
-
-function StatCard({ label, value, change, icon: Icon, color, note }) {
-  return <div className="rounded-2xl border border-[#eee5da] bg-white p-5 shadow-soft">
-    <div className="flex items-start justify-between">
-      <div>
-        <p className="text-xs font-semibold text-stone-500">{label}</p>
-        <p className="mt-3 font-display text-3xl font-extrabold tracking-tight text-latte-900">{value}</p>
-      </div>
-      <div className={`flex h-11 w-11 items-center justify-center rounded-2xl ${color}`}><Icon size={20} /></div>
-    </div>
-    <div className="mt-4 flex items-center gap-2 text-[11px]">
-      <span className="inline-flex items-center gap-1 font-extrabold text-emerald-700"><TrendingUp size={12}/>{change}</span>
-      <span className="text-stone-400">{note}</span>
-    </div>
-  </div>
-}
-
-function Avatar({ name, tone = 'brown', size = 'md' }) {
-  const colors = { brown: 'bg-latte-200 text-latte-800', green: 'bg-[#e5eee1] text-[#5e7655]', blue: 'bg-sky-100 text-sky-700', rose: 'bg-rose-100 text-rose-700', gold: 'bg-amber-100 text-amber-700' }
-  const sz = size === 'sm' ? 'h-8 w-8 text-[10px]' : 'h-10 w-10 text-xs'
-  return <div className={`flex ${sz} shrink-0 items-center justify-center rounded-xl font-extrabold ${colors[tone]}`}>{name.split(' ').slice(0, 2).map(s => s[0]).join('')}</div>
-}
-
-function EmptyState({ title, desc }) {
-  return <div className="flex flex-col items-center justify-center py-16 text-center">
-    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-latte-100 text-latte-600"><FileText size={23}/></div>
-    <h3 className="mt-4 font-display font-extrabold text-latte-900">{title}</h3>
-    <p className="mt-1 max-w-sm text-sm text-stone-500">{desc}</p>
   </div>
 }
 
@@ -376,8 +308,7 @@ function GenericPage({ page, role, genderFilter, setGenderFilter }) {
   const [selectedDorm, setSelectedDorm] = useState('Semua')
   const [selectedDate, setSelectedDate] = useState('')
   const [showModal, setShowModal] = useState(false)
-  const genderFilteredPage = ['Absensi Sholat', 'Absensi Kegiatan', 'Tahfidz'].includes(page)
-  const attendanceFilterPages = ['Absensi Sholat', 'Absensi Kegiatan', 'Tahfidz'].includes(page)
+  const genderFilteredPage = ['Absensi Sholat', 'Absensi Kegiatan'].includes(page)
   useEffect(() => {
     setFilter('Semua')
     setSearch('')
@@ -416,20 +347,6 @@ function GenericPage({ page, role, genderFilter, setGenderFilter }) {
       ],
     },
     'Kegiatan': { sub: 'Kelola jadwal kegiatan dan daftar kehadiran peserta.', icon: CalendarDays, stats: [['Kegiatan aktif','12','green'],['Selesai hari ini','4','blue'],['Akan datang','8','amber']], cols: ['Nama Kegiatan','Tanggal','Waktu','Peserta','Cabang','Status'], rows: [['Kajian Kitab Akhlak','23 Okt 2026','08.00','192','Pusat','Terjadwal'],['Setoran Tahfidz Pagi','23 Okt 2026','06.00','176','Semua cabang','Berlangsung'],['Muhadharah Jumat','24 Okt 2026','19.30','88','Cabang Depok','Akan datang'],['Kerja Bakti Asrama','25 Okt 2026','07.00','64','Cabang Bogor','Akan datang']] },
-    'Tahfidz': {
-      sub: 'Pantau target dan progres hafalan Al-Qur’an dengan filter kategori, cabang, asrama, dan tanggal setoran.',
-      icon: BookOpen,
-      stats: [['Setoran minggu ini','326','green'],['Target tercapai','78%','blue'],['Perlu evaluasi','18','amber']],
-      cols: ['Nama Santri','Jenis Kelamin','Jenis Setoran','Surah / Ayat','Nilai','Pengajar','Tanggal','Cabang','Asrama'],
-      rows: [
-        ['Ahmad Fauzan','Ikhwan','Hafalan baru','Al-Baqarah 1–10','A','Ust. Hamdan',toDateKey(),'Pusat Darun Nahdhah','Asrama Al-Falah'],
-        ['Aisyah Humaira','Akhwat','Murojaah','An-Nisa 1–15','A+','Usth. Maryam',toDateKey(),'Cabang Depok','Asrama An-Nisa'],
-        ['Muhammad Rizki','Ikhwan','Hafalan baru','Ali Imran 1–8','B+','Ust. Hamdan',addDaysToKey(-1),'Pusat Darun Nahdhah','Asrama Al-Ikhlas'],
-        ['Fatimah Zahra','Akhwat','Murojaah','Yasin 1–20','A','Usth. Maryam',addDaysToKey(-1),'Cabang Depok','Asrama An-Nisa'],
-        ['Nadia Safitri','Akhwat','Hafalan baru','Al-Mulk 1–10','A','Usth. Maryam',addDaysToKey(-2),'Cabang Bogor','Asrama An-Nisa'],
-        ['Abdullah Hakim','Ikhwan','Murojaah','Al-Kahfi 1–10','B','Ust. Hamdan',addDaysToKey(-2),'Cabang Bogor','Asrama Al-Falah'],
-      ],
-    },
     'Hukuman': { sub: 'Kelola catatan pelanggaran dan tindak lanjut pembinaan.', icon: ShieldCheck, stats: [['Catatan bulan ini','24','amber'],['Selesai ditindaklanjuti','18','green'],['Dalam proses','6','red']], cols: ['Santri','Pelanggaran','Tingkat','Tanggal','Status'], rows: [['Abdullah Hakim','Terlambat berjamaah','Ringan','22 Okt 2026','Dalam proses'],['Muhammad Rizki','Tidak mengikuti piket','Ringan','21 Okt 2026','Selesai'],['Santri DN-23918','Tidak hadir kegiatan','Sedang','20 Okt 2026','Selesai']] },
     'Reward': { sub: 'Dokumentasikan prestasi dan apresiasi bagi santri.', icon: Award, stats: [['Reward bulan ini','38','green'],['Santri berprestasi','31','blue'],['Total poin','1.240','amber']], cols: ['Penerima','Reward','Alasan','Tanggal','Poin'], rows: [['Aisyah Humaira','Hafalan terbaik','Mencapai target 10 juz','22 Okt 2026','100'],['Ahmad Fauzan','Teladan disiplin','Kehadiran 100%','21 Okt 2026','50'],['Fatimah Zahra','Prestasi akademik','Nilai kajian terbaik','19 Okt 2026','75']] },
     'Asrama': { sub: 'Atur unit asrama, kapasitas, dan penempatan santri.', icon: House, stats: [['Total asrama','12','brown'],['Kapasitas terisi','86%','green'],['Perlu peninjauan','2','amber']], cols: ['Nama Asrama','Kategori','Cabang','Penghuni','Kapasitas','Status'], rows: [['Asrama Al-Falah','Ikhwan','Pusat Darun Nahdhah','86','100','Aktif'],['Asrama Al-Ikhlas','Ikhwan','Pusat Darun Nahdhah','72','80','Aktif'],['Asrama An-Nisa','Akhwat','Cabang Depok','64','75','Aktif'],['Asrama Al-Madinah','Ikhwan','Cabang Bogor','48','60','Aktif']] },
@@ -445,7 +362,6 @@ function GenericPage({ page, role, genderFilter, setGenderFilter }) {
   const metadataIndexes = {
     'Absensi Sholat': { branch: 8, dorm: 9, date: 10 },
     'Absensi Kegiatan': { branch: 5, dorm: 6, date: 7 },
-    'Tahfidz': { branch: 7, dorm: 8, date: 6 },
   }
   const meta = metadataIndexes[page]
   const branches = meta ? [...new Set(cfg.rows.map(row => row[meta.branch]))] : []
@@ -540,6 +456,9 @@ export default function App() {
   const [collapsed, setCollapsed] = useState(false)
   const [santri, setSantri] = useState(initialSantri)
   const [activities, setActivities] = useState(createInitialActivities)
+  const [jadwalTahfidz, setJadwalTahfidz] = useState(createInitialJadwal)
+  const [setoranTahfidz, setSetoranTahfidz] = useState(createInitialSetoran)
+  const [riwayatPreset, setRiwayatPreset] = useState(null)
   const [genderByModule, setGenderByModule] = useState({ 'Data Santri': 'Semua', 'Absensi Sholat': 'Semua', 'Absensi Kegiatan': 'Semua', 'Tahfidz': 'Semua' })
   const [expandedGenderMenus, setExpandedGenderMenus] = useState({})
   const [notificationsOpen, setNotificationsOpen] = useState(false)
@@ -625,8 +544,8 @@ export default function App() {
         </div>
       </header>
       <main className="mx-auto max-w-[1600px] px-4 py-6 sm:px-7 sm:py-8 xl:px-9">
-        {page === 'Dashboard' ? (isStudent ? <StudentPortal santri={santri}/> : <Dashboard role={role} santri={santri} activities={activities}/>) : page === 'Data Santri' ? <SantriPage santri={santri} setSantri={setSantri} role={role} genderFilter={genderByModule['Data Santri']} setGenderFilter={gender => setGenderByModule(current => ({ ...current, 'Data Santri': gender }))}/> : page === 'Kegiatan' ? <ActivitiesPage activities={activities} setActivities={setActivities} role={role}/> : <GenericPage page={page} role={role} genderFilter={genderByModule[page] || 'Semua'} setGenderFilter={gender => setGenderByModule(current => ({ ...current, [page]: gender }))}/>}
-        <footer className="mt-8 flex flex-wrap items-center justify-between gap-2 border-t border-[#e9dfd3] pt-5 text-[10px] text-stone-400"><p>© 2026 E-Absensi Darun Nahdhah <span className="mx-1">·</span> Frontend preview v0.2.2</p><p className="flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-emerald-500"/> Data demo · Belum terhubung backend</p></footer>
+        {page === 'Dashboard' ? (isStudent ? <StudentPortal santri={santri}/> : <Dashboard role={role} santri={santri} activities={activities}/>) : page === 'Data Santri' ? <SantriPage santri={santri} setSantri={setSantri} role={role} genderFilter={genderByModule['Data Santri']} setGenderFilter={gender => setGenderByModule(current => ({ ...current, 'Data Santri': gender }))}/> : page === 'Kegiatan' ? <ActivitiesPage activities={activities} setActivities={setActivities} role={role}/> : page === 'Tahfidz' ? <TahfidzPage role={role} santri={santri} jadwal={jadwalTahfidz} setJadwal={setJadwalTahfidz} setoran={setoranTahfidz} setSetoran={setSetoranTahfidz} genderFilter={genderByModule['Tahfidz'] || 'Semua'} setGenderFilter={gender => setGenderByModule(current => ({ ...current, 'Tahfidz': gender }))} onOpenRiwayat={(nis) => { setRiwayatPreset(nis ? { santriNis: nis } : null); setPage('Riwayat Setoran') }}/> : page === 'Riwayat Setoran' ? <RiwayatPage role={role} santri={santri} jadwal={jadwalTahfidz} setoran={setoranTahfidz} preset={riwayatPreset} onPresetConsumed={() => setRiwayatPreset(null)}/> : <GenericPage page={page} role={role} genderFilter={genderByModule[page] || 'Semua'} setGenderFilter={gender => setGenderByModule(current => ({ ...current, [page]: gender }))}/>}
+        <footer className="mt-8 flex flex-wrap items-center justify-between gap-2 border-t border-[#e9dfd3] pt-5 text-[10px] text-stone-400"><p>© 2026 E-Absensi Darun Nahdhah <span className="mx-1">·</span> Frontend preview v0.2.3</p><p className="flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-emerald-500"/> Data demo · Belum terhubung backend</p></footer>
       </main>
     </div>
     {dark && <style>{`.dark-mode{filter:none;background:#211c18;color:#f6f0e8}.dark-mode aside,.dark-mode header,.dark-mode main .bg-white{background:#302821!important;color:#f6f0e8!important}.dark-mode main .text-latte-900,.dark-mode header .text-latte-900{color:#f6f0e8!important}.dark-mode main .border-\\[\\#eee5da\\],.dark-mode header{border-color:#4c3c30!important}.dark-mode main .text-stone-500,.dark-mode main .text-stone-400{color:#c3b6a8!important}.dark-mode main .bg-\\[\\#f7f4ef\\]{background:#211c18!important}`}</style>}

@@ -66,9 +66,23 @@
 - Dialog placeholder tambah kegiatan.
 
 ## Tahfidz
-- Statistik setoran, target, evaluasi.
-- Riwayat setoran, surah/ayat, nilai, pengajar.
-- Dropdown kategori santri: semua, ikhwan, atau akhwat.
+- Pembagian akses: Super Admin mengelola jadwal dan penugasan santri; Admin/Muhafidz/Muhafidzah hanya menerima penugasan dan mencatat setoran.
+- Super Admin: membuat, mengedit, dan menghapus jadwal setoran (pengajar, cabang, asrama, tanggal, jam mulai/selesai).
+- Super Admin: memilih banyak santri per jadwal dengan NIS, nama, dan kategori Ikhwan/Akhwat.
+- Peringatan bentrok jadwal pengajar dan penugasan ganda santri pada tanggal/rentang waktu sama, dengan konfirmasi sebelum menyimpan.
+- Ringkasan pembagian santri per Muhafidz/Muhafidzah yang dapat dipakai sebagai filter.
+- Admin/Muhafidz/Muhafidzah: kartu identitas pengajar login, pilihan jadwal penugasan, statistik pencatatan, dan tabel santri dengan status setoran.
+- Admin hanya melihat santri yang ditugaskan Super Admin; tidak dapat mengubah jadwal atau memindahkan penugasan.
+- Form input setoran: kategori Muraja'ah/Ziyadah, jumlah halaman 1–20, juz 1–30, 114 surat, nomor halaman 1–604, keterangan Binnadzar/Bil Ghaib, penilaian Lancar/Kurang Lancar/Tidak Lancar, tanggal, waktu, dan catatan.
+- Validasi: halaman awal + jumlah halaman tidak boleh melebihi halaman 604; santri wajib berasal dari jadwal penugasan.
+- Dropdown kategori santri: semua, ikhwan, atau akhwat pada halaman Tahfidz.
+
+## Riwayat Setoran Tahfidz
+- Kolom riwayat: nomor, tanggal, santri, kategori, jumlah halaman, juz, surat, nomor halaman, keterangan, penilaian, dan Muhafidz/Muhafidzah pencatat.
+- Filter: nama/NIS santri, tanggal, pengajar (Super Admin), cabang, asrama, kategori setoran, dan penilaian.
+- Super Admin melihat seluruh riwayat; Admin hanya riwayat setoran kewenangannya.
+- Detail riwayat setoran per catatan, termasuk catatan tambahan dan jadwal terkait.
+- Riwayat setoran per santri dapat dibuka dari aksi tabel Admin.
 
 ## Hukuman dan Reward
 - Ringkasan pembinaan.
@@ -102,3 +116,9 @@
 - Dropdown sidebar pada Absensi Sholat, Absensi Kegiatan, Tahfidz, dan Data Santri.
 - Pilihan Semua Santri, Ikhwan, dan Akhwat.
 - Filter sidebar menyinkronkan filter tabel pada modul terpilih.
+
+## Modul Tahfidz dan Riwayat Setoran (v0.2.3)
+- Super Admin mengelola jadwal setoran dan pembagian santri; Admin/Muhafidz/Muhafidzah hanya mencatat setoran santri yang ditugaskan.
+- Form input setoran dengan validasi halaman, juz, surat, dan penilaian manual.
+- Halaman Riwayat Setoran dengan filter lengkap dan pembatasan berdasarkan role.
+- Akun Admin Cabang pada demo diikat ke akun Muhafidz (Ust. Hamdan) untuk simulasi penugasan.
