@@ -1,6 +1,6 @@
-# E-Absensi Darun Nahdhah — Frontend Preview v0.2.1
+# E-Absensi Darun Nahdhah — Frontend Preview v0.3.0
 
-Starter frontend React + Vite + Tailwind CSS untuk rancangan UI E-Absensi Darun Nahdhah. Tampilan menggunakan gaya SaaS modern dengan palet coklat susu, krem, dan putih. Project disiapkan agar dapat di-deploy sebagai frontend statis di Vercel.
+Frontend React + Vite + Tailwind CSS untuk E-Absensi Darun Nahdhah. Tampilan menggunakan gaya SaaS modern dengan palet hijau tanaman (plant green). Project disiapkan agar dapat di-deploy sebagai frontend statis di Vercel.
 
 ## Persyaratan
 - Node.js 18+ (disarankan Node.js 20 atau 22)
@@ -39,32 +39,34 @@ File `vercel.json` sudah mengatur output build dan rewrite ke `index.html` agar 
 ### Jika project berada di dalam subfolder repository
 Import root folder yang berisi `package.json`, atau atur **Root Directory** di pengaturan project Vercel ke `e-absensi-darun-nahdhah` (sesuaikan dengan nama subfolder di repository). Jangan set Root Directory ke folder `src`.
 
-## Pembaruan v0.2.1
-- Urutan menu utama: Dashboard, Absensi Sholat, Absensi Kegiatan, Tahfidz, Data Santri, Kegiatan.
-- Empat menu terkait santri memiliki dropdown Ikhwan/Akhwat pada sidebar.
-- Pemilihan Ikhwan/Akhwat dari sidebar tersambung dengan filter tabel pada modul terkait.
-
-## Demo interaksi
-- Navigasi sidebar untuk melihat modul.
+## Demo interaksi v0.3.0
+- Navigasi sidebar untuk melihat modul dengan urutan Workspace: Dashboard, Data Santri, Absensi Sholat, Absensi Kegiatan, Tahfidz, Kegiatan, Riwayat Setoran.
 - Menu profil kanan atas untuk mengganti tampilan role: Super Admin, Admin Cabang, dan Santri.
 - Logout untuk membuka halaman login.
-- Halaman Data Santri memiliki pencarian, filter ikhwan/akhwat, tambah, edit, dan hapus data dummy.
+- Data Santri: pencarian nama/NIS, filter kategori, cabang → asrama, status, tambah/edit/hapus, kolom Poin, serta Import/Export Excel.
+- Absensi Sholat dan Absensi Kegiatan: filter kategori, cabang → asrama, rentang tanggal, jenis sholat/kegiatan, status, pencarian, dan form pencatatan absensi.
+- Kegiatan: filter kategori/peserta/cabang, tambah/edit/hapus kegiatan, serta kelola kategori peserta melalui tombol (+).
+- Tahfidz dan Riwayat Setoran tetap menyediakan jadwal, penugasan, form setoran, dan filter lengkap.
 - Tombol tema pada header untuk pratinjau mode gelap.
-- Halaman modul memiliki tabel, pencarian/filter, statistik, dan dialog tambah data demo.
-- Absensi Sholat, Absensi Kegiatan, dan Tahfidz menyediakan filter kategori, cabang, asrama, dan tanggal.
-- Absensi Sholat dan Absensi Kegiatan menampilkan status Hadir, Izin, Sakit, Terlambat, dan Tidak hadir.
+
+## Pembaruan v0.3.0 — Tema hijau, filter fungsional, Excel, Poin, kategori peserta
+- Palet plant green: Forest `#245C43`, Leaf `#4F8060`, Sage `#A9C5A0`, background `#F5F8F3`, card putih, border `#E0E9DE`.
+- Opsi "Semua Santri" dihapus; Data Santri, Absensi Sholat, Absensi Kegiatan, dan Tahfidz memakai gate Ikhwan/Akhwat dan data tidak dicampur.
+- Semua filter benar-benar menyaring data, dapat dikombinasikan dan direset; statistik mengikuti hasil filter.
+- Data Santri memiliki kolom Poin (reward − pelanggaran), NIS otomatis unik (`DN-2XXXX`) yang tidak berubah saat edit.
+- Import/Export Excel Data Santri memakai SheetJS dan diproses sepenuhnya di browser.
+- Kegiatan memiliki kategori peserta yang dapat dikelola, peserta spesifik, dan relasi ke absensi kegiatan.
+- Modul Tahfidz v0.2.3 dipertahankan.
 
 ## Batasan saat ini
 - Seluruh data adalah dummy dan tersimpan di state browser selama sesi.
-- Belum ada API, database, autentikasi sungguhan, otorisasi server, upload file, atau pembuatan PDF nyata.
-- Form pada beberapa modul adalah placeholder interaksi; skema CRUD lengkap dikembangkan setelah kontrak backend disepakati.
+- Belum ada API, database, autentikasi sungguhan, otorisasi server, atau pembuatan PDF nyata.
+- Import/Export Excel hanya memproses file di browser; tidak ada penyimpanan permanen.
 - Login hanya simulasi frontend. Jangan gunakan akun demo untuk data nyata.
 - Deployment Vercel hanya mempublikasikan frontend; Vercel tidak otomatis menyediakan database atau backend untuk aplikasi ini.
 
 Lihat `docs/SOT.md`, `docs/FEATURES.md`, `AGENTS.md`, dan `PROMPT_EXECUTION.md` untuk scope, aturan implementasi, dan prompt eksekusi tahap awal.
 
-
-## Filter Ikhwan/Akhwat (v0.2.2)
-- Menu Absensi Sholat, Absensi Kegiatan, Tahfidz, dan Data Santri memiliki submenu Semua Santri, Ikhwan, dan Akhwat.
-- Klik nama menu untuk membuka submenu; gunakan chevron di sisi kanan untuk expand/collapse.
-- Memilih Ikhwan/Akhwat menyaring tabel modul ke kategori tersebut, dan pilihan ditampilkan sebagai badge di judul halaman.
+## Catatan upgrade
+- v0.3.0 menggantikan palet coklat susu dengan plant green.
+- Submenu kategori kini hanya Ikhwan dan Akhwat; kategori dipilih melalui submenu sidebar atau gate pada halaman.

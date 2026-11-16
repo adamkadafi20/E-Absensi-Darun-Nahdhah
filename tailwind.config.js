@@ -4,22 +4,24 @@ export default {
   theme: {
     extend: {
       colors: {
-        latte: {
-          50: '#fbf9f6',
-          100: '#f4efe8',
-          200: '#e9ded0',
-          300: '#d9c5ae',
-          400: '#c5a78a',
-          500: '#a98261',
-          600: '#8b674b',
-          700: '#6f513d',
-          800: '#513b2e',
-          900: '#34271f'
+        // Palet hijau tanaman (plant green):
+        // 700 forest green (primer), 600 leaf green (sekunder), 400 sage (aksen).
+        leaf: {
+          50: '#f5f8f3',
+          100: '#eaf1e6',
+          200: '#e0e9de',
+          300: '#c9d8c4',
+          400: '#a9c5a0',
+          500: '#78877a',
+          600: '#4f8060',
+          700: '#245c43',
+          800: '#1d4634',
+          900: '#20372a'
         },
-        ink: '#302821'
+        ink: '#20372a'
       },
       boxShadow: {
-        soft: '0 10px 35px rgba(70, 49, 32, 0.06)'
+        soft: '0 10px 35px rgba(36, 92, 67, 0.06)'
       },
       fontFamily: {
         sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif']

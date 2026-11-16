@@ -113,25 +113,25 @@ export default function JadwalForm({ editing, jadwalList, santri, onClose, onSav
           {form.santriNis.length > 0 && <button type="button" onClick={() => set('santriNis', [])} className="inline-flex items-center gap-1 text-[11px] font-bold text-stone-400 hover:text-rose-500"><X size={12}/> Hapus pilihan ({form.santriNis.length})</button>}
         </div>
         <div className="mt-2 overflow-hidden rounded-xl border border-stone-200">
-          <div className="flex items-center gap-2 border-b border-stone-100 bg-latte-50/70 px-3 py-2">
+          <div className="flex items-center gap-2 border-b border-stone-100 bg-leaf-50/70 px-3 py-2">
             <Search size={14} className="shrink-0 text-stone-400"/>
             <input value={santriQuery} onChange={(event) => setSantriQuery(event.target.value)} placeholder="Cari nama atau NIS santri..." className="w-full bg-transparent text-xs outline-none placeholder:text-stone-400" />
           </div>
           <div className="max-h-44 divide-y divide-stone-50 overflow-y-auto">
             {candidateSantri.map((s) => (
-              <label key={s.nis} className="flex cursor-pointer items-center gap-3 px-3 py-2.5 transition hover:bg-latte-50/60">
-                <input type="checkbox" checked={form.santriNis.includes(s.nis)} onChange={() => toggleSantri(s.nis)} className="rounded border-stone-300 accent-latte-700" />
+              <label key={s.nis} className="flex cursor-pointer items-center gap-3 px-3 py-2.5 transition hover:bg-leaf-50/60">
+                <input type="checkbox" checked={form.santriNis.includes(s.nis)} onChange={() => toggleSantri(s.nis)} className="rounded border-stone-300 accent-leaf-700" />
                 <div className="min-w-0 flex-1">
-                  <p className="text-xs font-bold text-latte-900">{s.name}</p>
+                  <p className="text-xs font-bold text-leaf-900">{s.name}</p>
                   <p className="mt-0.5 text-[10px] text-stone-400">{s.nis} · {s.dorm}</p>
                 </div>
-                <Badge tone={s.gender === 'Ikhwan' ? 'brown' : 'blue'}>{s.gender}</Badge>
+                <Badge tone={s.gender === 'Ikhwan' ? 'leaf' : 'blue'}>{s.gender}</Badge>
               </label>
             ))}
             {candidateSantri.length === 0 && <p className="px-3 py-5 text-center text-xs text-stone-400">Tidak ada santri yang cocok. Pastikan cabang/asrama sudah dipilih atau ubah kata kunci pencarian.</p>}
           </div>
         </div>
-        <p className="mt-2 flex items-center gap-1.5 text-[11px] font-semibold text-stone-500"><Users size={13} className="text-latte-500"/>{form.santriNis.length} santri dipilih{form.santriNis.length > 0 ? `: ${form.santriNis.map((nis) => santri.find((s) => s.nis === nis)?.name || nis).join(', ')}` : ''}</p>
+        <p className="mt-2 flex items-center gap-1.5 text-[11px] font-semibold text-stone-500"><Users size={13} className="text-leaf-500"/>{form.santriNis.length} santri dipilih{form.santriNis.length > 0 ? `: ${form.santriNis.map((nis) => santri.find((s) => s.nis === nis)?.name || nis).join(', ')}` : ''}</p>
         {errors.santriNis && <p className="mt-1 text-[10px] font-semibold text-rose-500">{errors.santriNis}</p>}
       </div>
     </div>

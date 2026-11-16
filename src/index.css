@@ -6,8 +6,8 @@
 
 :root {
   font-family: 'DM Sans', sans-serif;
-  color: #302821;
-  background: #f7f4ef;
+  color: #20372a;
+  background: #f5f8f3;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
 }
@@ -16,10 +16,31 @@
 body { margin: 0; min-width: 320px; min-height: 100vh; }
 button, input, select { font: inherit; }
 button { cursor: pointer; }
-::selection { background: #e9ded0; color: #513b2e; }
+::selection { background: #dce6d8; color: #1d4634; }
 
 .soft-grid {
-  background-image: radial-gradient(rgba(139, 103, 75, .11) .7px, transparent .7px);
+  background-image: radial-gradient(rgba(36, 92, 67, .09) .7px, transparent .7px);
   background-size: 18px 18px;
 }
+
 .scrollbar-none::-webkit-scrollbar { display: none; }
+
+/* Cetak laporan: sembunyikan kerangka aplikasi, tampilkan header dokumen resmi. */
+@media print {
+  @page { margin: 14mm; }
+  body { background: #fff; }
+  aside, header, footer, .no-print { display: none !important; }
+  .app-shell { padding-left: 0 !important; }
+  .app-main { max-width: none !important; padding: 0 !important; }
+  .report-document {
+    border: 0 !important;
+    box-shadow: none !important;
+    padding: 0 0 14px !important;
+    break-inside: avoid;
+  }
+  .report-document img {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  main section, main table { break-inside: avoid; }
+}

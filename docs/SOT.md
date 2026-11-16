@@ -42,31 +42,32 @@ E-Absensi Darun Nahdhah adalah aplikasi web untuk pengelolaan data santri dan mo
 14. Pengaturan dan keamanan.
 
 ## 5. Prinsip UI/UX
-- Brand: coklat susu, krem hangat, putih; hijau sage sebagai aksen status.
-- Visual: modern futuristic SaaS, card-based, garis tipis, rounded corners, ruang putih yang cukup.
+- Brand: hijau tanaman — Forest `#245C43`, Leaf `#4F8060`, Sage `#A9C5A0`, background `#F5F8F3`, card putih, border `#E0E9DE`, teks `#20372A`/`#78877A`.
+- Visual: modern SaaS, card-based, garis tipis, rounded corners, ruang putih yang cukup.
 - Responsif: desktop-first, sidebar desktop dan drawer pada layar kecil.
 - Aksesibilitas: label input, fokus keyboard yang terlihat, kontras teks, status tidak hanya dibedakan oleh warna.
-- Navigasi: grup menu Workspace, Pembinaan, dan Sistem. Urutan awal Workspace: Dashboard, Absensi Sholat, Absensi Kegiatan, Tahfidz, Data Santri, Kegiatan.
+- Navigasi: grup menu Workspace, Pembinaan, dan Sistem. Urutan Workspace: Dashboard, Data Santri, Absensi Sholat, Absensi Kegiatan, Tahfidz, Kegiatan, Riwayat Setoran.
 - Dashboard menampilkan jam live zona Asia/Jakarta; indikator waktu tidak berarti data dummy diperbarui secara real-time dari server.
-- Filter dropdown ikhwan/akhwat disediakan pada Data Santri, Absensi Sholat, Absensi Kegiatan, dan Tahfidz.
+- Modul berbasis kategori santri menampilkan pilihan Ikhwan/Akhwat terlebih dahulu; tidak ada opsi "Semua Santri" dan data Ikhwan/Akhwat tidak pernah tercampur. Super Admin dapat berganti kategori kapan saja.
+- Filter pada setiap modul harus benar-benar menyaring data, dapat dikombinasikan, dan dapat direset. Statistik mengikuti hasil filter.
 - Bahasa antarmuka: Bahasa Indonesia.
 
 ## 6. Batasan rilis frontend
-- Semua data dummy.
-- Tidak ada koneksi database/API.
-- Login dan pergantian role adalah simulasi.
+- Semua data dummy dan disimpan di state React; tidak ada koneksi database/API.
+- Login dan pergantian role adalah simulasi; otorisasi sesungguhnya belum ada.
 - Tombol ekspor PDF menampilkan pemberitahuan demo, belum menghasilkan PDF.
-- Data CRUD yang benar-benar interaktif pada prototipe: data santri. Modul lain menampilkan tabel dummy dan placeholder form.
+- Excel (import/export Data Santri) diproses di browser dengan SheetJS; file tidak diunggah ke server.
 - Tidak boleh mengklaim fitur keamanan frontend sebagai otorisasi produksi.
 
-## 7. Kriteria penerimaan
-- `npm install` dan `npm run dev` dapat digunakan pada lingkungan Node yang didukung.
-- `npm run build` selesai tanpa error.
-- Pengguna dapat menavigasi seluruh modul melalui sidebar.
-- Pergantian role mengubah tampilan navigasi dan dashboard.
-- Halaman Data Santri mendukung pencarian, filter gender, tambah, edit, dan hapus data dummy.
-- Tampilan responsif pada desktop dan layar kecil.
-- Semua placeholder dan batasan backend dijelaskan secara eksplisit.
+## 7. Kriteria penerimaan v0.3
+- `npm run build` selesai tanpa error dan tidak ada console error pada pemakaian normal.
+- Seluruh menu Workspace dapat diakses; submenu Ikhwan/Akhwat hanya berisi dua pilihan.
+- Data Santri: filter kategori, cabang, asrama, status, nama, NIS bekerja dan dapat dikombinasikan/direset; kolom Poin tampil setelah Kehadiran; NIS otomatis unik dan tidak berubah saat edit.
+- Import Excel: template tanpa NIS, validasi per baris, pratinjau, dan baris gagal tetap terlihat setelah import.
+- Export Excel: seluruh data atau data terfilter, nama file `Data_Santri_Darun_Nahdhah_YYYY-MM-DD.xlsx`, kolom sesuai SOT.
+- Absensi Sholat/Kegiatan: filter kategori, cabang→asrama, rentang tanggal, jenis sholat/kegiatan, status, pencarian bekerja; pencatatan absensi memberi feedback.
+- Kegiatan: kategori peserta dapat ditambah/diubah/dihapus dengan validasi relasi, dan absensi kegiatan mengikuti kategori peserta.
+- Modul Tahfidz v0.2.3 tetap berfungsi (jadwal, penugasan, setoran, riwayat).
 
 ## 8. Di luar scope saat ini
 - Backend, database, API, dan migrasi.
@@ -75,6 +76,9 @@ E-Absensi Darun Nahdhah adalah aplikasi web untuk pengelolaan data santri dan mo
 - Integrasi QR code, GPS, notifikasi, atau absensi otomatis yang belum disepakati.
 - Deployment produksi.
 
-
-## Navigasi dan pemisahan tampilan gender
-Enam menu utama di sidebar ditampilkan berurutan: Dashboard, Absensi Sholat, Absensi Kegiatan, Tahfidz, Data Santri, Kegiatan. Absensi Sholat, Absensi Kegiatan, Tahfidz, dan Data Santri menyediakan submenu Ikhwan/Akhwat. Memilih submenu menyaring baris data berdasarkan jenis kelamin; pilihan filter juga tersedia pada halaman tabel.
+## 9. Keputusan v0.3 (Excel, NIS, Poin, Kategori Peserta)
+- Poin santri = total poin reward − total poin pelanggaran (`calcPoin`), bukan angka acak. Sumber data adalah state reward/hukuman yang sama dengan halaman Pembinaan.
+- NIS dibuat otomatis dengan pola `DN-2XXXX`; generator memeriksa seluruh NIS terpakai, menaikkan nomor terbesar, dan menghasilkan batch unik untuk import massal. NIS tidak berubah saat edit.
+- Template import hanya memuat Nama Lengkap, Cabang, Asrama, Jenis Kelamin. Validasi mencakup field wajib, kecocokan master cabang/asrama, relasi asrama–cabang, kecocokan gender dengan asrama, dan duplikat (dalam file maupun data tersimpan).
+- Kegiatan mendefinisikan kategori peserta, peserta spesifik (opsional), cabang, asrama, tanggal, dan waktu. Kategori peserta awal: Seluruh Ikhwan, Seluruh Akhwat, Kelompok Tahfidz, Kelompok Kitab, Kelompok Bahasa. Kategori yang masih dipakai kegiatan tidak dapat dihapus.
+- Absensi kegiatan hanya menerima peserta yang memenuhi kategori peserta, cabang, dan asrama kegiatan.

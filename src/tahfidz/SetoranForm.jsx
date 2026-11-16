@@ -73,8 +73,8 @@ export default function SetoranForm({ jadwal, santriList, preselectedNis, onClos
       <Button type="submit" icon={Check}>Simpan Setoran</Button>
     </>}
   >
-    <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 rounded-xl bg-latte-50 px-3.5 py-3 text-[11px] font-semibold text-stone-600">
-      <span className="text-latte-800">Jadwal aktif:</span>
+    <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 rounded-xl bg-leaf-50 px-3.5 py-3 text-[11px] font-semibold text-stone-600">
+      <span className="text-leaf-800">Jadwal aktif:</span>
       <span>{jadwal.date} · {jadwal.startTime}–{jadwal.endTime} WIB</span>
       <span>·</span>
       <span>{jadwal.branch} / {jadwal.dorm}</span>
@@ -83,7 +83,7 @@ export default function SetoranForm({ jadwal, santriList, preselectedNis, onClos
       {preselectedNis ? (
         <div className="sm:col-span-2">
           <Field label="Nama santri" required>
-            <input readOnly value={`${selectedSantri?.name || '-'} · ${form.santriNis}`} className={`${inputClass} bg-latte-50`} />
+            <input readOnly value={`${selectedSantri?.name || '-'} · ${form.santriNis}`} className={`${inputClass} bg-leaf-50`} />
           </Field>
         </div>
       ) : (
@@ -96,7 +96,7 @@ export default function SetoranForm({ jadwal, santriList, preselectedNis, onClos
           </Field>
         </div>
       )}
-      {selectedSantri && <div className="sm:col-span-2 flex flex-wrap items-center gap-2"><Badge tone={selectedSantri.gender === 'Ikhwan' ? 'brown' : 'blue'}>{selectedSantri.gender}</Badge><Badge tone="neutral">{selectedSantri.branch}</Badge><Badge tone="neutral">{selectedSantri.dorm}</Badge></div>}
+      {selectedSantri && <div className="sm:col-span-2 flex flex-wrap items-center gap-2"><Badge tone={selectedSantri.gender === 'Ikhwan' ? 'leaf' : 'blue'}>{selectedSantri.gender}</Badge><Badge tone="neutral">{selectedSantri.branch}</Badge><Badge tone="neutral">{selectedSantri.dorm}</Badge></div>}
       <Field label="Kategori" required error={errors.kategori}>
         <select value={form.kategori} onChange={(event) => set('kategori', event.target.value)} className={`${inputClass} ${errors.kategori ? 'border-rose-300' : ''}`}>
           <option value="">— Pilih kategori —</option>
@@ -143,7 +143,7 @@ export default function SetoranForm({ jadwal, santriList, preselectedNis, onClos
         <textarea rows={3} value={form.catatan} onChange={(event) => set('catatan', event.target.value)} className={`${inputClass} resize-y`} placeholder="Catatan Muhafidz/Muhafidzah untuk setoran ini..." />
       </Field>
     </div>
-    <p className="mt-4 rounded-xl border border-dashed border-latte-200 bg-latte-50 px-3.5 py-3 text-[11px] leading-5 text-stone-500">
+    <p className="mt-4 rounded-xl border border-dashed border-leaf-200 bg-leaf-50 px-3.5 py-3 text-[11px] leading-5 text-stone-500">
       Validasi: jumlah halaman 1–20 · juz 1–30 · nomor halaman 1–604 · jumlah halaman + halaman awal tidak boleh melebihi halaman 604. Santri harus terdaftar pada jadwal penugasan.
     </p>
   </Modal>

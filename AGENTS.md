@@ -14,11 +14,13 @@ Bangun frontend E-Absensi Darun Nahdhah sesuai SOT, menggunakan React + Vite + T
 - Vite
 - Tailwind CSS 3
 - lucide-react untuk ikon
+- SheetJS (`xlsx`) untuk import/export Excel Data Santri
 - JavaScript/JSX; tidak menambahkan framework UI lain tanpa persetujuan.
 
 ## UI rules
-- Gunakan palet coklat susu/krem/putih dengan aksen sage.
+- Gunakan palet hijau tanaman (plant green): Forest `#245C43`, Leaf `#4F8060`, Sage `#A9C5A0`, background `#F5F8F3`, card `#FFFFFF`, border `#E0E9DE`, teks `#20372A` / `#78877A`.
 - Pertahankan gaya modern SaaS, responsive layout, sidebar, header, card, table, badges, dan form konsisten.
+- Modul berbasis kategori santri (Data Santri, Absensi Sholat, Absensi Kegiatan, Tahfidz) wajib menampilkan pilihan Ikhwan/Akhwat terlebih dahulu; tidak ada opsi "Semua Santri" dan data tidak boleh tercampur.
 - Bahasa UI adalah Bahasa Indonesia.
 - Hindari emoji dekoratif berlebihan; gunakan ikon Lucide.
 - Semua halaman harus memiliki empty state, label yang jelas, dan feedback untuk aksi penting.

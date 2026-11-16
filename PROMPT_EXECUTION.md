@@ -1,5 +1,7 @@
 # Prompt Execution — Eksekusi Proyek Awal
 
+> Catatan: dokumen ini adalah prompt historis untuk tahap awal proyek. Untuk scope aktif v0.3 (tema plant green, filter fungsional, Excel, Poin, kategori peserta), acuan utama tetap `docs/SOT.md` dan `docs/FEATURES.md`.
+
 Salin prompt ini ke coding agent setelah folder proyek dibuka.
 
 ---
